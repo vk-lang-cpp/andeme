@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Third party
+thirdparty/include
+thirdparty/lib64
