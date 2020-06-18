@@ -2,27 +2,20 @@
 set -e
 . ./common.sh
 
-VERSION=v5.15.0
+VERSION=5.12
 
 WORK_DIR=$(mktemp -d)
-#WORK_DIR=$(pwd)/tmp
 
 git clone -b $VERSION https://code.qt.io/qt/qt5.git $WORK_DIR/qt5
 
 cd $WORK_DIR/qt5
 
-git submodule update --init --recursive
+perl init-repository
 
 mkdir -p $WORK_DIR/build
 cd $WORK_DIR/build
 
-$WORK_DIR/qt5/configure -release -opensource -nomake examples -nomake tests -confirm-license \
-    -prefix $THIRDPARTY_DIR/qt5 \
-    -skip qtgamepad -skip qtlocation \
-    -skip qtmacextras -skip qtpurchasing \
-    -skip qtscript -skip qtwebsockets \
-    -skip qtwebengine -skip qtdocgallery \
-    -c++std c++17
+$WORK_DIR/qt5/configure -release  -opensource -nomake examples -nomake tests -confirm-license -prefix $THIRDPARTY_DIR/qt5 
 
 make -j${NUM_PROCESSES}
 
