@@ -15,7 +15,13 @@ perl init-repository
 mkdir -p $WORK_DIR/build
 cd $WORK_DIR/build
 
-$WORK_DIR/qt5/configure -release  -opensource -nomake examples -nomake tests -confirm-license -prefix $THIRDPARTY_DIR/qt5 
+$WORK_DIR/qt5/configure -release  -opensource \
+    -nomake examples -nomake tests -confirm-license \
+    -skip qtgamepad -skip qtlocation \
+    -skip qtmacextras -skip qtpurchasing \
+    -skip qtscript -skip qtwebsockets \
+    -skip qtwebengine -skip qtdocgallery \
+    -prefix $THIRDPARTY_DIR/qt5 
 
 make -j${NUM_PROCESSES}
 
