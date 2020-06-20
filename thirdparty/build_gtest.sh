@@ -12,7 +12,7 @@ cd $WORK_DIR/googletest
 mkdir -p cmake/build
 cd cmake/build
 
-$CMAKE -DCMAKE_INSTALL_PREFIX=$THIRDPARTY_DIR ../..
+$CMAKE -DCMAKE_INSTALL_PREFIX=$THIRDPARTY_DIR/gtest ../..
 
 make -j${NUM_PROCESSES}
 

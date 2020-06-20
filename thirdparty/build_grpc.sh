@@ -14,7 +14,8 @@ git submodule update --init
 mkdir -p cmake/build
 cd cmake/build
 
-$CMAKE -DgRPC_INSTALL=ON -DgRPC_SSL_PROVIDER=package -DgRPC_BUILD_TESTS=OFF --config Release -DCMAKE_INSTALL_PREFIX=$THIRDPARTY_DIR ../..
+$CMAKE -DgRPC_INSTALL=ON -DgRPC_SSL_PROVIDER=package -DgRPC_BUILD_TESTS=OFF --config Release
+-DCMAKE_INSTALL_PREFIX=$THIRDPARTY_DIR/grpc ../..
 
 make -j${NUM_PROCESSES}
 
