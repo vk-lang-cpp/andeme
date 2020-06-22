@@ -1,0 +1,6 @@
+syntax = "proto3";
+package andeme.schema;
+
+message Message {
+    string text = 1;
+}

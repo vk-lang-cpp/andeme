@@ -32,5 +32,6 @@
 *.app
 
 # Third party
-thirdparty/include
-thirdparty/lib64
+thirdparty/grpc
+thirdparty/gtest
+thirdparty/qt5

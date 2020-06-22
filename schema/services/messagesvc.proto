@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package andeme.schema.services;
+
+import "schema/message.proto";
+import "google/protobuf/empty.proto";
+
+service MessageSvc {
+    rpc Send(Message) returns (google.protobuf.Empty) {}
+    rpc Subscribe(google.protobuf.Empty) returns (stream Message) {}
+}
