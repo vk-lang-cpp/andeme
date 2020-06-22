@@ -5,7 +5,7 @@ namespace andeme {
 ::grpc::Status Server::Send(::grpc::ServerContext *context,
                             const ::andeme::schema::Message *request,
                             ::google::protobuf::Empty *response) {
-  std::unique_lock lock(mutex_);
+  std::lock_guard lock(mutex_);
 
   for (auto q : queues_) {
     auto queue = q.lock();
@@ -23,7 +23,7 @@ namespace andeme {
   auto queue = std::make_shared<ThreadSafeQueue<andeme::schema::Message>>();
 
   {
-    std::unique_lock lock(mutex_);
+    std::lock_guard lock(mutex_);
     queues_.push_back(queue);
   }
 

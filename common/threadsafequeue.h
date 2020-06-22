@@ -19,18 +19,10 @@ class ThreadSafeQueue {
     return value;
   }
 
-  void push(const T& value) {
+  template <class U> void push(U &&value) {
     {
-      std::unique_lock<std::mutex> lock(mutex_);
-      queue_.push(value);
-    }
-    cond_.notify_one();
-  }
-
-  void push(T&& value) {
-    {
-      std::unique_lock<std::mutex> lock(mutex_);
-      queue_.push(std::move(value));
+      std::lock_guard lock(mutex_);
+      queue_.push(std::forward<U>(value));
     }
     cond_.notify_one();
   }
