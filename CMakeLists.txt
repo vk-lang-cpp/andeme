@@ -82,11 +82,11 @@ target_include_directories(AndemeServer PRIVATE schema server)
 target_link_libraries(AndemeServer schema gRPC::grpc++_unsecure)
 
 # AndemeQtGui
-file(GLOB ANDEME_QT_GUI_SRCS qtgui/*.cpp)
+file(GLOB ANDEME_QT_GUI_SRCS qtgui/*.cpp qtgui/*.h)
 file(GLOB ANDEME_QT_GUI_UI qtgui/*.ui)
 
 qt5_wrap_ui(ANDEME_QT_GUI_SRCS ${ANDEME_QT_GUI_UI})
 
 add_executable(AndemeQtGui ${ANDEME_QT_GUI_SRCS})
-target_link_libraries(AndemeQtGui Qt5::Widgets)
-
+target_link_libraries(AndemeQtGui Qt5::Widgets AndemeClient)
+target_include_directories(AndemeQtGui PRIVATE qtgui)
