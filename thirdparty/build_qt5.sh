@@ -21,7 +21,7 @@ cd "$WORK_DIR/build"
     -skip qtmacextras -skip qtpurchasing \
     -skip qtscript -skip qtwebsockets \
     -skip qtwebengine -skip qtdocgallery \
-    -prefix $THIRDPARTY_DIR/qt5 
+    -prefix "$THIRDPARTY_DIR/qt5"
 
 make -j${NUM_PROCESSES}
 
