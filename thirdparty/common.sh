@@ -1,5 +1,5 @@
 CMAKE=cmake
-if command -v cmake3
+if command -v cmake3 > /dev/null
 then
     CMAKE=cmake3
 fi
