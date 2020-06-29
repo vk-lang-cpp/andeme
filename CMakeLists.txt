@@ -66,6 +66,7 @@ foreach(SVC_PROTO ${ANDEME_SERVICES_PROTO})
         "${${SVC_NAME}_CPP}")
 endforeach()
 target_sources(schema PUBLIC ${SERVICES_SRCS})
+target_include_directories(schema PUBLIC $<TARGET_PROPERTY:gRPC::grpc++,INTERFACE_INCLUDE_DIRECTORIES>)
 
 # client library
 file(GLOB ANDEME_CLIENT_SRCS client/*.cpp)

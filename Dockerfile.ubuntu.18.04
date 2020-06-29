@@ -3,12 +3,28 @@ FROM ubuntu:18.04
 ARG NUM_PROCESSES=1
 
 RUN apt-get update && \
-    apt-get install -y git cmake g++ libssl-dev libgl-dev libvulkan-dev  && \
+    apt-get install -y git g++ libssl-dev libgl-dev libvulkan-dev wget make && \
     rm -rf /var/lib/apt/lists/*
-
 
 ADD ./thirdparty/*.sh /andeme/thirdparty/
 WORKDIR /andeme/thirdparty
+
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.18.0-rc2/cmake-3.18.0-rc2-Linux-x86_64.sh && \
+    chmod +x ./cmake-3.18.0-rc2-Linux-x86_64.sh && \
+    ./cmake-3.18.0-rc2-Linux-x86_64.sh --prefix=/ --skip-license
+
+RUN ./build_qt5.sh ${NUM_PROCESSES}
 RUN ./build_gtest.sh ${NUM_PROCESSES}
 RUN ./build_grpc.sh ${NUM_PROCESSES}
-RUN ./build_qt5.sh ${NUM_PROCESSES}
+
+
+
+ADD client /andeme/client
+ADD common /andeme/common
+ADD qtgui /andeme/qtgui
+ADD schema /andeme/schema
+ADD server /andeme/server
+ADD CMakeLists.txt /andeme/CMakeLists.txt
+WORKDIR /andeme
+
+RUN mkdir build && cd build && cmake .. && make

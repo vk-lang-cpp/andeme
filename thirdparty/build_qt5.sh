@@ -17,10 +17,30 @@ cd "$WORK_DIR/build"
 
 "$WORK_DIR/qt5/configure" -release  -opensource \
     -nomake examples -nomake tests -confirm-license \
-    -skip qtgamepad -skip qtlocation \
-    -skip qtmacextras -skip qtpurchasing \
-    -skip qtscript -skip qtwebsockets \
-    -skip qtwebengine -skip qtdocgallery \
+    -skip qtdatavis3d \
+    -skip qtdeclarative \
+    -skip qtdocgallery \
+    -skip qtfeedback \
+    -skip qtgamepad \
+    -skip qtlocation \
+    -skip qtmacextras \
+    -skip qtnetworkauth \
+    -skip qtpim \
+    -skip qtpurchasing \
+    -skip qtqa \
+    -skip qtquickcontrols \
+    -skip qtquickcontrols2 \
+    -skip qtremoteobjects \
+    -skip qtrepotools \
+    -skip qtscript \
+    -skip qtscxml \
+    -skip qtsensors \
+    -skip qtserialbus \
+    -skip qtserialport \
+    -skip qtspeech \
+    -skip qttranslations \
+    -skip qtwebengine \
+    -skip qtwebsockets \
     -prefix "$THIRDPARTY_DIR/qt5"
 
 make -j${NUM_PROCESSES}
