@@ -1,0 +1,14 @@
+FROM ubuntu:18.04
+
+ARG NUM_PROCESSES=1
+
+RUN apt-get update && \
+    apt-get install -y git cmake g++ libssl-dev libgl-dev libvulkan-dev  && \
+    rm -rf /var/lib/apt/lists/*
+
+
+ADD ./thirdparty/*.sh /andeme/thirdparty/
+WORKDIR /andeme/thirdparty
+RUN ./build_gtest.sh ${NUM_PROCESSES}
+RUN ./build_grpc.sh ${NUM_PROCESSES}
+RUN ./build_qt5.sh ${NUM_PROCESSES}
