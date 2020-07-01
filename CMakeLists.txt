@@ -6,7 +6,6 @@ if (WIN32)
 add_definitions(/std:c++17 /D_WIN32_WINNT=0x600)
 else ()
 add_definitions(-std=c++17 -fPIC)
-find_package(Threads REQUIRED)
 endif()
 
 set(THIRDPARTY_PATH ${CMAKE_SOURCE_DIR}/thirdparty)
@@ -18,14 +17,14 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 find_package(protobuf REQUIRED PATHS ${THIRDPARTY_PATH}/grpc NO_DEFAULT_PATH)
+find_package(Threads REQUIRED)
                               
 find_package(Qt5 COMPONENTS Widgets REQUIRED PATHS ${THIRDPARTY_PATH}/qt5)
-find_package(gRPC CONFIG REQUIRED PATHS ${THIRDPARTY_PATH}/grpc NO_DEFAULT_PATH)
-find_package(GTest REQUIRED PATHS ${THIRDPARTY_PATH}/gtest NO_DEFAULT_PATH)
+find_package(gRPC CONFIG REQUIRED PATHS ${THIRDPARTY_PATH}/grpc)
+find_package(GTest REQUIRED PATHS ${THIRDPARTY_PATH}/gtest)
 
 
-find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin PATHS ${THIRDPARTY_PATH}/grpc/bin
-    NO_DEFAULT_PATH)
+find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin PATHS ${THIRDPARTY_PATH}/grpc/bin)
 if(NOT GRPC_CPP_PLUGIN)
     message(FATAL_ERROR "System grpc_cpp_plugin not found")
 endif()
