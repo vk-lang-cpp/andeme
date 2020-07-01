@@ -3,7 +3,7 @@ set VERSION=v1.28.x
 set THIRDPARTY_DIR=%cd%
 
 mkdir tmp
-set WORK_DIR="%cd%\tmp"
+set WORK_DIR=%cd%\tmp
 
 git clone -b %VERSION% https://github.com/grpc/grpc "%WORK_DIR%\grpc"
 

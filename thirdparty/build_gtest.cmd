@@ -2,7 +2,7 @@ set VERSION=v1.10.x
 set THIRDPARTY_DIR=%cd%
 
 mkdir tmp
-set WORK_DIR="%THIRDPARTY_DIR%\tmp"
+set WORK_DIR=%THIRDPARTY_DIR%\tmp
 
 git clone -b %VERSION% https://github.com/google/googletest.git "%WORK_DIR%\googletest"
 cd %WORK_DIR%\googletest
