@@ -19,7 +19,18 @@ andeme/thirdparty и вызвать build_*.sh скрипты.
 
 ## Сборка проекта
 
+### Windows
 Под windows это лучше делать в Build Tools консоли
+
+```bash
+cd andeme
+mkdir build
+cd build
+cmake -G "NMake Makefiles" ..
+nmake
+```
+
+### Linux
 
 ```bash
 cd andeme
