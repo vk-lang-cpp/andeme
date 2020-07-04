@@ -14,7 +14,7 @@ mkdir build
 mkdir cmake\build
 cd cmake\build
 
-cmake -G "NMake Makefiles" -DgRPC_INSTALL=ON -DgRPC_SSL_PROVIDER=package -DgRPC_BUILD_TESTS=OFF --config Release -DCMAKE_INSTALL_PREFIX="%THIRDPARTY_DIR%\grpc" ..\..
+cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" -DgRPC_INSTALL=ON -DgRPC_SSL_PROVIDER=package -DgRPC_BUILD_TESTS=OFF --config Release -DCMAKE_INSTALL_PREFIX="%THIRDPARTY_DIR%\grpc" ..\..
 
 nmake
 
