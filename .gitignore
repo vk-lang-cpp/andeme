@@ -35,3 +35,6 @@
 thirdparty/grpc
 thirdparty/gtest
 thirdparty/qt5
+
+# Build
+/build
