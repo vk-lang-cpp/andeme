@@ -72,11 +72,16 @@ endforeach()
 target_sources(schema PUBLIC ${SERVICES_SRCS})
 target_include_directories(schema PUBLIC $<TARGET_PROPERTY:gRPC::grpc++,INTERFACE_INCLUDE_DIRECTORIES>)
 
+# common library
+file(GLOB ANDEME_COMMON_SRCS common/*.cpp)
+add_library(AndemeCommon ${ANDEME_COMMON_SRCS})
+target_include_directories(AndemeCommon PRIVATE common)
+
 # client library
 file(GLOB ANDEME_CLIENT_SRCS client/*.cpp)
 add_library(AndemeClient ${ANDEME_CLIENT_SRCS})
 target_include_directories(AndemeClient PRIVATE client)
-target_link_libraries(AndemeClient schema gRPC::grpc++_unsecure)
+target_link_libraries(AndemeClient schema gRPC::grpc++_unsecure AndemeCommon)
 
 
 # server application
@@ -84,7 +89,7 @@ target_link_libraries(AndemeClient schema gRPC::grpc++_unsecure)
 file(GLOB ANDEME_SERVER_SRCS server/*.cpp)
 add_executable(AndemeServer ${ANDEME_SERVER_SRCS})
 target_include_directories(AndemeServer PRIVATE schema server)
-target_link_libraries(AndemeServer schema gRPC::grpc++_unsecure)
+target_link_libraries(AndemeServer schema gRPC::grpc++_unsecure AndemeCommon)
 
 # AndemeQtGui
 file(GLOB ANDEME_QT_GUI_SRCS qtgui/*.cpp qtgui/*.h)
