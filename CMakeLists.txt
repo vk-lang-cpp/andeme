@@ -29,6 +29,24 @@ if(NOT GRPC_CPP_PLUGIN)
     message(FATAL_ERROR "System grpc_cpp_plugin not found")
 endif()
 
+#x86_debug_release
+#set(OPENSSL_ROOT_DIR C:/Temp/openssl/)
+#set(OPENSSL_INCLUDE_DIR C:/Temp/openssl/include/)
+#set(OPENSSL_LIBRARIES C:/Temp/openssl/lib/)
+
+#x64_Release
+set(OPENSSL_ROOT_DIR C:/Program Files/OpenSSL-Win64)
+set(OPENSSL_INCLUDE_DIR "C:/Program Files/OpenSSL-Win64/include")
+set(OPENSSL_SSL_LIBRARIES "C:/Program Files/OpenSSL-Win64/lib")
+
+include(FindOpenSSL)
+find_package(OpenSSL REQUIRED)
+include_directories(${OPENSSL_INCLUDE_DIR})
+#target_link_libraries(${OPENSSL_LIBRARIES})
+
+message("OPENSSL_INCLUDE_DIR: " ${OPENSSL_INCLUDE_DIR})
+message("OPENSSL_LIBRARIES: " ${OPENSSL_LIBRARIES})
+
 # Build schema
 
 file(GLOB ANDEME_SCHEMA_PROTO schema/*.proto)
@@ -83,9 +101,7 @@ add_library(AndemeClient ${ANDEME_CLIENT_SRCS})
 target_include_directories(AndemeClient PRIVATE client)
 target_link_libraries(AndemeClient schema gRPC::grpc++_unsecure AndemeCommon)
 
-
 # server application
-
 file(GLOB ANDEME_SERVER_SRCS server/*.cpp)
 add_executable(AndemeServer ${ANDEME_SERVER_SRCS})
 target_include_directories(AndemeServer PRIVATE schema server)
