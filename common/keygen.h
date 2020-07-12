@@ -1,5 +1,5 @@
-#ifndef KEYGEN_H
-#define KEYGEN_H
+#ifndef ANDEME_COMMON_KEYGEN_H_
+#define ANDEME_COMMON_KEYGEN_H_
 
 #include <string>
 
@@ -7,11 +7,11 @@ namespace andeme {
 
 	class PublicKey {
 
-		mutable std::string pubkey;
+		const std::string public_key_;
 
 	public:
 
-		PublicKey(const std::string key) noexcept;
+		PublicKey(const std::string&& key) noexcept;
 
 		bool verify(const std::string& sign, const std::string& data) const;
 
@@ -19,11 +19,12 @@ namespace andeme {
 
 	class PrivateKey {
 
-		mutable std::string privkey;
+		const std::string private_key_;
+
 
 	public:
 
-		PrivateKey(const std::string key) noexcept;
+		PrivateKey(const std::string&& key) noexcept;
 
 		std::string sign(const std::string& data) const;
 
@@ -33,17 +34,10 @@ namespace andeme {
 
 	public:
 
-		RSAUtil() = delete;
-		RSAUtil(const RSAUtil&) = delete;
-		RSAUtil& operator=(const RSAUtil&) = delete;
-		RSAUtil(RSAUtil&&) = delete;
-		RSAUtil& operator=(RSAUtil&&) = delete;
-
-		static constexpr int size{ 4096 };
-
 		static std::pair<PublicKey, PrivateKey> generate();
 
 	};
+
 }
 
 #endif 
