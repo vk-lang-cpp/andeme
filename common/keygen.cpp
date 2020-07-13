@@ -114,7 +114,7 @@ namespace andeme {
 		std::unique_ptr<EVP_PKEY, decltype(&EVP_PKEY_free)> evp(EVP_PKEY_new(), EVP_PKEY_free);
 		EVP_PKEY_set1_RSA(evp.get(), rsa_keys.get());
 
-		return { PublicKey{ std::move(getPubKey(evp.get())) }, PrivateKey{ std::move(getPrivKey(evp.get())) } };
+		return { PublicKey{ getPubKey(evp.get()) }, PrivateKey{ getPrivKey(evp.get()) } };
 	}
 
 }
