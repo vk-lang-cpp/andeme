@@ -21,6 +21,7 @@ find_package(Threads REQUIRED)
                               
 find_package(Qt5 COMPONENTS Widgets REQUIRED PATHS ${THIRDPARTY_PATH}/qt5)
 find_package(gRPC CONFIG REQUIRED PATHS ${THIRDPARTY_PATH}/grpc)
+enable_testing()
 find_package(GTest REQUIRED PATHS ${THIRDPARTY_PATH}/gtest)
 
 
@@ -74,8 +75,16 @@ target_include_directories(schema PUBLIC $<TARGET_PROPERTY:gRPC::grpc++,INTERFAC
 
 # common library
 file(GLOB ANDEME_COMMON_SRCS common/*.cpp)
+file(GLOB ANDEME_COMMON_TEST_SRCS common/*.t.cpp)
+list(REMOVE_ITEM ANDEME_COMMON_SRCS ${ANDEME_COMMON_TEST_SRCS})
+
 add_library(AndemeCommon ${ANDEME_COMMON_SRCS})
 target_include_directories(AndemeCommon PRIVATE common)
+
+add_executable(AndemeCommonUnittests ${ANDEME_COMMON_TEST_SRCS})
+target_include_directories(AndemeCommonUnittests PRIVATE common ${GTEST_INCLUDE_DIRS})
+target_link_libraries(AndemeCommonUnittests AndemeCommon
+    GTest::gtest GTest::gtest_main)
 
 # client library
 file(GLOB ANDEME_CLIENT_SRCS client/*.cpp)
