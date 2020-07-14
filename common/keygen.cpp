@@ -1,41 +1,39 @@
 #include <openssl/pem.h>
 #include <memory>
 #include <random>
-#include <vector>
 #include "keygen.h"
 
 namespace {
 
 	const int kKeySize = 4096;
-	const std::string kKeyPass = "privateKey";
 
-	std::string getPubKey(EVP_PKEY* evp) {
+	std::string getPubKey(RSA* rsa) {
 		
 		std::unique_ptr<BIO, decltype(&BIO_free)> buf(BIO_new(BIO_s_mem()), BIO_free);
-		PEM_write_bio_PUBKEY(buf.get(), evp);
+		PEM_write_bio_RSAPublicKey(buf.get(), rsa);
 
 		size_t length = BIO_ctrl_pending(buf.get());
-		std::vector<char> res;
-		res.reserve(length);
+
+		std::string res;
+		res.resize(length);
 
 		BIO_read(buf.get(), res.data(), length);
 
-		return std::string{ res.data(), length };
+		return res;
 	}
 
-	std::string getPrivKey(EVP_PKEY* evp) {
+	std::string getPrivKey(RSA* rsa) {
 		
 		std::unique_ptr<BIO, decltype(&BIO_free)> buf(BIO_new(BIO_s_mem()), BIO_free);
-		PEM_write_bio_PKCS8PrivateKey(buf.get(), evp, EVP_aes_256_cbc(),
-			const_cast<char*>(kKeyPass.data()), kKeyPass.length(), nullptr, nullptr);
+		PEM_write_bio_RSAPrivateKey(buf.get(), rsa, nullptr, nullptr, 0, nullptr, nullptr);
 
 		size_t length = BIO_ctrl_pending(buf.get());
-		std::vector<char> res;
-		res.reserve(length);
+		std::string res;
+		res.resize(length);
 
 		BIO_read(buf.get(), res.data(), length);
 
-		return std::string{ reinterpret_cast<char*>(res.data()), length };
+		return res;
 	}
 
 }
@@ -48,26 +46,15 @@ namespace andeme {
 
 	bool PublicKey::verify(const std::string& sign, const std::string& data) const {
 
-		const unsigned char* message = reinterpret_cast<const unsigned char*>(data.data());
-
-		const unsigned char* sigbuf = reinterpret_cast<const unsigned char*>(sign.data());
-
-		std::unique_ptr<EVP_MD_CTX, decltype(&EVP_MD_CTX_free)> m_RSAVerifyCtx(EVP_MD_CTX_new(), EVP_MD_CTX_free);
 		std::unique_ptr<BIO, decltype(&BIO_free)> keybio(BIO_new_mem_buf(public_key_.data(), -1), BIO_free);
-		std::unique_ptr<EVP_PKEY, decltype(&EVP_PKEY_free)> pubKey(EVP_PKEY_new(), EVP_PKEY_free);
-		EVP_PKEY* evp_key = nullptr;
+		std::unique_ptr<RSA, decltype(&RSA_free)> pubKey(nullptr, RSA_free);
+		RSA* rsa_key = nullptr;
 
-		PEM_read_bio_PUBKEY(keybio.get(), &evp_key, nullptr, const_cast<char*>(kKeyPass.data()));
-		pubKey.reset(evp_key);
+		PEM_read_bio_RSAPublicKey(keybio.get(), &rsa_key, nullptr, nullptr);
+		pubKey.reset(rsa_key);
 
-		if (EVP_DigestVerifyInit(m_RSAVerifyCtx.get(), nullptr, EVP_sha256(), nullptr, pubKey.get()) <= 0) {
-			return false;
-		}
-		if (EVP_DigestUpdate(m_RSAVerifyCtx.get(), message, data.length()) <= 0) {
-			return false;
-		}
-
-		return EVP_DigestVerifyFinal(m_RSAVerifyCtx.get(), sigbuf, sign.length());
+		return RSA_verify(NID_sha256, reinterpret_cast<const unsigned char*>(data.data()), data.length(), 
+			reinterpret_cast<const unsigned char*>(sign.data()), sign.length(), pubKey.get());
 	}
 
 	//PrivateKey
@@ -76,27 +63,21 @@ namespace andeme {
 
 	std::string PrivateKey::sign(const std::string& data) const {
 
-		const unsigned char* temp = reinterpret_cast<const unsigned char*>(data.data());
-
-		std::vector<unsigned char> res;
-		res.reserve(kKeySize / 8);
-
-		std::unique_ptr<EVP_MD_CTX, decltype(&EVP_MD_CTX_free)> m_RSASignCtx(EVP_MD_CTX_new(), EVP_MD_CTX_free);
 		std::unique_ptr<BIO, decltype(&BIO_free)> keybio(BIO_new_mem_buf(private_key_.data(), -1), BIO_free);
-		std::unique_ptr<EVP_PKEY, decltype(&EVP_PKEY_free)> privKey(EVP_PKEY_new(), EVP_PKEY_free);
-		EVP_PKEY* evp_key = nullptr;
+		std::unique_ptr<RSA, decltype(&RSA_free)> privKey(nullptr, RSA_free);
+		RSA* rsa_key = nullptr;
 
-		PEM_read_bio_PrivateKey(keybio.get(), &evp_key, nullptr, const_cast<char*>(kKeyPass.data()));
-		privKey.reset(evp_key);
+		PEM_read_bio_RSAPrivateKey(keybio.get(), &rsa_key, nullptr, nullptr);
+		privKey.reset(rsa_key);
 
-		size_t siglen;
+		std::string res;
+		res.resize(kKeySize / 8);
+		unsigned int siglen;
 
-		EVP_DigestSignInit(m_RSASignCtx.get(), nullptr, EVP_sha256(), nullptr, privKey.get());
-		EVP_DigestUpdate(m_RSASignCtx.get(), temp, data.length());
-		EVP_DigestSignFinal(m_RSASignCtx.get(), nullptr, &siglen);
-		EVP_DigestSignFinal(m_RSASignCtx.get(), res.data(), &siglen);
+		RSA_sign(NID_sha256, reinterpret_cast<const unsigned char*>(data.data()), data.length(),
+			reinterpret_cast<unsigned char*>(res.data()), &siglen, privKey.get());
 
-		return std::string{ reinterpret_cast<char*>(res.data()), siglen };
+		return res;
 	};
 
 	//RSAUtil
@@ -111,10 +92,7 @@ namespace andeme {
 		std::unique_ptr<RSA, decltype(&RSA_free)> rsa_keys(RSA_new(), RSA_free);
 		RSA_generate_key_ex(rsa_keys.get(), kKeySize, bne.get(), nullptr);
 
-		std::unique_ptr<EVP_PKEY, decltype(&EVP_PKEY_free)> evp(EVP_PKEY_new(), EVP_PKEY_free);
-		EVP_PKEY_set1_RSA(evp.get(), rsa_keys.get());
-
-		return { PublicKey{ getPubKey(evp.get()) }, PrivateKey{ getPrivKey(evp.get()) } };
+		return { PublicKey{ getPubKey(rsa_keys.get()) }, PrivateKey{ getPrivKey(rsa_keys.get()) } };
 	}
 
 }
