@@ -1,80 +1,53 @@
 #include "RSAKey.h"
-#include "BioBox.h"
-#include "EvpBox.h"
 
-RSAKey::RSAKey() : pKeyPair(nullptr), cipher(NULL) {
+namespace andeme {
+	RSAKey::RSAKey() : bio(BIO_new(BIO_s_mem())),
+		pKeyPair(RSA_new()),
+		cipher(EVP_get_cipherbyname("aes-256-cbc"))
+	{
+		BIGNUM* e = BN_new();
+		BN_set_word(e, RSA_F4);
+			int ret = RSA_generate_key_ex(pKeyPair, RSA_KEYLENGTH, e, 0);
+			if (cipher == NULL)
+				OpenSSL_add_all_algorithms();
 
-	cipher = EVP_get_cipherbyname("aes-256-cbc");
-	if (cipher == NULL)
-		OpenSSL_add_all_algorithms();
+	}
 
-	/* Generate RSA  */
-	if (pKeyPair != nullptr)
-		RSA_free(pKeyPair);
-	pKeyPair = RSA_generate_key(RSA_KEYLENGTH, RSA_E, NULL, NULL);
-	/*Checking key for available*/
-	CheckKey();
-}
+	RSAKey::~RSAKey()
+	{
+		if (pKeyPair != nullptr)
+			RSA_free(pKeyPair);
+		if (bio !=nullptr)
+			BIO_free(bio);
+	}
 
-RSAKey::~RSAKey() {
-	RSA_free(pKeyPair);
-}
+	std::string RSAKey::getPublicKey()
+	{
+		PEM_write_bio_RSAPublicKey(bio, pKeyPair);
+		size_t length = BIO_ctrl_pending(bio);
 
-RSA * RSAKey::getRSAKey()const {
-	return pKeyPair;
-}
+		std::string pstr;
+		void* buf = malloc(length);
 
-const EVP_CIPHER* RSAKey::getCipher() {
-	return cipher;
-}
+		BIO_read(bio, buf, length);
 
+		std::string pem = std::string(reinterpret_cast<const char*>(buf), length);
+		free(buf);
+		return pem;
+	}
+	std::string RSAKey::getPrivate()
+	{
+		int ret = PEM_write_bio_RSAPrivateKey(bio, pKeyPair, nullptr, nullptr, 0, nullptr, nullptr);
 
-void RSAKey::CheckKey() const {
-	if (!pKeyPair)
-		throw NoKeypairLoaded();
-}
+		size_t length = BIO_ctrl_pending(bio);
 
-void RSAKey::Load(const std::string& pem, const std::string& pass) {
-	RSA_free(pKeyPair);
-	BioBox bio;
-	bio.ConstructSink(pem);
-	pKeyPair = PEM_read_bio_RSAPrivateKey(bio.Bio(), NULL, pass_cb,
-		StringAsVoid(pass));
-	CheckKey();
-}
+		std::string pstr;
+		void* buf = malloc(length);
 
-void RSAKey::PublicKey(std::string& pem) const {
-	CheckKey();
-	BioBox bio;
-	bio.NewBuffer();
-	int ret = PEM_write_bio_RSA_PUBKEY(bio.Bio(), pKeyPair);
-	if (!ret)
-		throw ReadError();
-	const BioBox::Buffer& buf = bio.ReadAll();
-	pem = std::string(reinterpret_cast<const char*>(buf.buf), buf.size);
-}
+		BIO_read(bio, buf, length);
 
-void RSAKey::PrivateKey(std::string& pem, const std::string& passphrase) const {
-	CheckKey();
-	BioBox bio;
-	bio.NewBuffer();
-
-	EvpBox evp(pKeyPair);
-	int ret = PEM_write_bio_PKCS8PrivateKey(bio.Bio(), evp.Key(),
-		EVP_aes_256_cbc(),
-		LoseStringConst(passphrase),
-		passphrase.size(), NULL, NULL);
-	if (!ret)
-		throw ReadError();
-	const BioBox::Buffer& buf = bio.ReadAll();
-	pem = std::string(reinterpret_cast<const char*>(buf.buf), buf.size);
-}
-
-
-const char* ReadError::what() const throw() {
-	return "Problem reading BIO.";
-}
-
-const char* NoKeypairLoaded::what() const throw() {
-	return "No keypair loaded.";
+		std::string pem = std::string(reinterpret_cast<const char*>(buf), length);
+		free(buf);
+		return pem;
+	}
 }
