@@ -38,3 +38,4 @@ thirdparty/qt5
 
 # Build
 /build
+build.dat
