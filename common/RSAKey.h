@@ -8,7 +8,6 @@
 #include <openssl/ssl.h>
 
 #include <iostream>
-#include <exception>
 #include <string> 
 #include <memory>
 
@@ -27,7 +26,6 @@ namespace andeme {
 		std::string getPrivate();
 
 	private:
-
 		RSA* pKeyPair;
 		BIO* bio;
 		const EVP_CIPHER* cipher;

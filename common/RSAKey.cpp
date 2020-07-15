@@ -7,7 +7,7 @@ namespace andeme {
 	{
 		BIGNUM* e = BN_new();
 		BN_set_word(e, RSA_F4);
-			int ret = RSA_generate_key_ex(pKeyPair, RSA_KEYLENGTH, e, 0);
+			RSA_generate_key_ex(pKeyPair, RSA_KEYLENGTH, e, 0);
 			if (cipher == NULL)
 				OpenSSL_add_all_algorithms();
 
