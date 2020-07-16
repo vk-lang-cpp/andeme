@@ -6,6 +6,7 @@
 #include <openssl/ossl_typ.h>
 #include <memory>
 #include <iostream>
+#include "rsautil.h"
 
 TEST(KeyGen, OpenSSLTest) {
 
@@ -174,4 +175,22 @@ TEST(KeyGen, OpenSSLTest) {
         ASSERT_EQ(signature2.size(), signature_len);
         ASSERT_NE(signature, signature2);
     }
+}
+
+TEST(RSAUtil, ClassTest) {
+    
+    using namespace std::string_literals;
+
+    auto [pub1, priv1] = andeme::RSAUtil::Generate();
+    auto [pub2, priv2] = andeme::RSAUtil::Generate();
+
+    std::string test_data = "data";
+
+    ASSERT_NE(priv1.Sign(test_data), ""s) << "Signing test failed";
+    
+    ASSERT_TRUE(pub1.Verify(priv1.Sign(test_data), test_data)) << "Veryfying test failed";
+
+    ASSERT_FALSE(pub1.Verify(priv2.Sign(test_data), test_data));
+
+    ASSERT_FALSE(pub1.Verify(priv1.Sign(test_data), test_data + "s"s));
 }
