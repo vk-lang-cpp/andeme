@@ -14,6 +14,7 @@ namespace andeme {
 		PublicKey(std::string&& key) noexcept;
 
 		bool Verify(const std::string& sign, const std::string& data) const;
+		const std::string& KeyValue();
 	};
 
 
@@ -26,6 +27,7 @@ namespace andeme {
 		PrivateKey(std::string&& key) noexcept;
 
 		std::string Sign(const std::string& data) const;
+		const std::string& KeyValue();
 	};
 
 

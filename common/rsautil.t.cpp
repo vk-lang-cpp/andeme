@@ -186,11 +186,15 @@ TEST(RSAUtil, ClassTest) {
 
     std::string test_data = "data";
 
+    ASSERT_NE(pub1.KeyValue(), pub2.KeyValue()) << "Public keys difference test failed";
+
+    ASSERT_NE(priv1.KeyValue(), priv2.KeyValue()) << "Private keys difference test failed";
+
     ASSERT_NE(priv1.Sign(test_data), ""s) << "Signing test failed";
     
     ASSERT_TRUE(pub1.Verify(priv1.Sign(test_data), test_data)) << "Veryfying test failed";
 
-    ASSERT_FALSE(pub1.Verify(priv2.Sign(test_data), test_data));
+    ASSERT_FALSE(pub1.Verify(priv2.Sign(test_data), test_data)) << "Different keys veryfying test failed";
 
-    ASSERT_FALSE(pub1.Verify(priv1.Sign(test_data), test_data + "s"s));
+    ASSERT_FALSE(pub1.Verify(priv1.Sign(test_data), test_data + "s"s)) << "Different strings veryfying test failed";
 }

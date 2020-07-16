@@ -56,6 +56,10 @@ namespace andeme {
 			reinterpret_cast<const unsigned char*>(sign.data()), sign.length(), pubKey.get());
 	}
 
+	const std::string& PublicKey::KeyValue() {
+		return public_key_;
+	}
+
 	//PrivateKey
 
 	PrivateKey::PrivateKey(std::string&& key) noexcept : private_key_{ std::move(key) } {}
@@ -76,6 +80,10 @@ namespace andeme {
 
 		return res;
 	};
+
+	const std::string& PrivateKey::KeyValue() {
+		return private_key_;
+	}
 
 	//RSAUtil
 
