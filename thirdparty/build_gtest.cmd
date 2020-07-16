@@ -11,7 +11,7 @@ mkdir cmake
 mkdir cmake\build
 cd cmake\build
 
-cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" -DCMAKE_INSTALL_PREFIX="%THIRDPARTY_DIR%\gtest" ..\.. 
+cmake -DCMAKE_BUILD_TYPE=Release -Dgtest_force_shared_crt=ON -G "NMake Makefiles" -DCMAKE_INSTALL_PREFIX="%THIRDPARTY_DIR%\gtest" ..\.. 
 
 nmake                                                                                                                                             
 
