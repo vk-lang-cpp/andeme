@@ -5,7 +5,6 @@
 #include <openssl/bn.h>
 #include <openssl/ossl_typ.h>
 #include <memory>
-#include <iostream>
 #include "rsautil.h"
 
 TEST(KeyGen, OpenSSLTest) {
@@ -35,7 +34,7 @@ TEST(KeyGen, OpenSSLTest) {
             ASSERT_EQ(public_key.size(), BIO_read(bio.get(), public_key.data(), public_key.size()));
         }
 
-        std::cout << public_key << std::endl;
+        ASSERT_FALSE(public_key.empty());
 
         {
             std::unique_ptr<BIO, decltype(&BIO_free)> bio(BIO_new(BIO_s_mem()), BIO_free);
@@ -52,7 +51,7 @@ TEST(KeyGen, OpenSSLTest) {
             ASSERT_EQ(private_key.size(), BIO_read(bio.get(), private_key.data(), private_key.size()));
         }
 
-        std::cout << private_key << std::endl;
+        ASSERT_FALSE(private_key.empty());
     }
 
     const std::string test_message =
