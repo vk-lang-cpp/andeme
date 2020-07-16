@@ -21,14 +21,17 @@ namespace andeme {
 	public:
 
 		RSAKey();
+		RSAKey(RSAKey const &) = delete;
+		RSAKey& operator=(RSAKey const &) = delete;
 		~RSAKey();
-		std::string getPublicKey();
-		std::string getPrivate();
+		std::pair<std::string, std::string> generate();
 
 	private:
+		std::string getPublicKey();
+		std::string getPrivate();
 		RSA* pKeyPair;
 		BIO* bio;
-		const EVP_CIPHER* cipher;
+
 	};
 
 }

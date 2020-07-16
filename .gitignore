@@ -39,4 +39,6 @@ thirdparty/qt5
 # Build
 /build
 CMakeLists.txt.user
-CMakeLists.txt
+CMakeSettings.json
+
+/.vs
