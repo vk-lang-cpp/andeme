@@ -4,6 +4,8 @@ project(Andeme)
 
 if (WIN32)
 add_definitions(/std:c++17 /D_WIN32_WINNT=0x600)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+add_compile_options("$<$<CONFIG:Release>:/MT>")
 else ()
 add_definitions(-std=c++17 -fPIC)
 endif()
