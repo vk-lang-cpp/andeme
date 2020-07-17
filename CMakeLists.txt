@@ -27,6 +27,10 @@ find_package(OpenSSL 1.1 REQUIRED)
 enable_testing()
 find_package(GTest REQUIRED PATHS ${THIRDPARTY_PATH}/gtest)
 
+#add SQLite3_libs_manually
+set(SQLite3_LIBRARY ${THIRDPARTY_PATH}/SQLite3/lib/sqlite3.lib)
+set(SQLite3_INCLUDE_DIR ${THIRDPARTY_PATH}/SQLite3/include)
+find_package (SQLite3)
 
 find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin PATHS ${THIRDPARTY_PATH}/grpc/bin)
 if(NOT GRPC_CPP_PLUGIN)
@@ -85,6 +89,10 @@ list(REMOVE_ITEM ANDEME_COMMON_SRCS ${ANDEME_COMMON_TEST_SRCS})
 add_library(AndemeCommon ${ANDEME_COMMON_SRCS})
 target_include_directories(AndemeCommon PRIVATE common)
 target_link_libraries(AndemeCommon OpenSSL::SSL)
+
+#add SQLite3 library
+target_link_libraries(AndemeCommon SQLite::SQLite3)
+
 
 add_executable(AndemeCommonUnittests ${ANDEME_COMMON_TEST_SRCS})
 target_include_directories(AndemeCommonUnittests PRIVATE common ${GTEST_INCLUDE_DIRS})
