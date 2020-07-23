@@ -5,7 +5,11 @@ project(Andeme)
 if (WIN32)
 add_definitions(/std:c++17 /D_WIN32_WINNT=0x600)
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-add_compile_options("$<$<CONFIG:Release>:/MT>")
+
+#if using release Visual studio configuration with compile /MT libs
+if (MSVC)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+endif()
 else ()
 add_definitions(-std=c++17 -fPIC)
 endif()
@@ -26,11 +30,7 @@ find_package(gRPC CONFIG REQUIRED PATHS ${THIRDPARTY_PATH}/grpc)
 find_package(OpenSSL 1.1 REQUIRED)
 enable_testing()
 find_package(GTest REQUIRED PATHS ${THIRDPARTY_PATH}/gtest)
-
-#add SQLite3_libs_manually
-set(SQLite3_LIBRARY ${THIRDPARTY_PATH}/SQLite3/lib/sqlite3.lib)
-set(SQLite3_INCLUDE_DIR ${THIRDPARTY_PATH}/SQLite3/include)
-find_package (SQLite3)
+find_package(SQLite3 REQUIRED PATHS ${THIRDPARTY_PATH}/SQLite3)
 
 find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin PATHS ${THIRDPARTY_PATH}/grpc/bin)
 if(NOT GRPC_CPP_PLUGIN)
