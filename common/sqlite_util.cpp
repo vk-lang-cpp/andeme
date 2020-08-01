@@ -1,4 +1,4 @@
-/*#pragma once
+#pragma once
 #include "sqlite_util.h"
 
 
@@ -35,8 +35,7 @@ namespace andeme {
 
     std::vector<andeme::schema::Message> MessageStorage:: getAllMsg(const std::function<bool(const andeme::schema::Message&)>& callback)
     {
-        Callback row;
-        execute("SELECT * FROM 'MESSAGES';", row);
+        execute("SELECT * FROM 'MESSAGES';", nullptr/*callback*/);
         return std::vector<andeme::schema::Message>();
     }
 
@@ -65,4 +64,3 @@ namespace andeme {
     }
 
 }
-*/

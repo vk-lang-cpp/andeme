@@ -1,4 +1,4 @@
-/*#ifndef ANDEME_COMMON_SQLITE_UTIL_H
+#ifndef ANDEME_COMMON_SQLITE_UTIL_H
 #define ANDEME_COMMON_SQLITE_UTIL_H
 #include <sqlite3.h>
 #include <string>
@@ -53,4 +53,3 @@ namespace andeme {
 }
 
 #endif // ANDEME_COMMON_SQLITE_UTIL_H
-*/
