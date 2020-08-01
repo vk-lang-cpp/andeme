@@ -43,7 +43,6 @@ namespace andeme {
         }
 
         ~SqliteGuard() {
-            std::cout << "shutdown" << std::endl;
             sqlite3_shutdown();
         }
     };
