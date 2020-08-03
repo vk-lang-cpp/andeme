@@ -12,7 +12,7 @@ namespace andeme {
             "Timestamp	INTEGER		NOT NULL," \
             "Author		TEXT		NOT NULL," \
             "Message	TEXT		NOT NULL," \
-            "Signature	TEXT		NOT NULL ,UNIQUE(Date,Message));";
+            "Signature	TEXT		NOT NULL ,UNIQUE(Timestamp,Message));";
 
         sqlite3_open_v2(filename.data(), &m_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
         execute(sql.data(),nullptr);
