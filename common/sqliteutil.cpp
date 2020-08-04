@@ -1,5 +1,5 @@
 #pragma once
-#include "sqlite_util.h"
+#include "sqliteutil.h"
 
 
 namespace andeme {
@@ -32,20 +32,20 @@ namespace andeme {
 
     bool MessageStorage::add(const andeme::schema::Message & msg)
     {
-        std::string message/*(msg.text())*/ = "Test";
         std::string Author = "Author";
         std::string sign = "sign";
         std::string sql =  "INSERT INTO MESSAGES ('Timestamp', 'Author', 'Message','Signature') \
-                VALUES (datetime('now','localtime'),'"+ Author +"','"+ message +"','"+ sign +"');";
+                VALUES (datetime('now','localtime'),'"+ Author +"','"+ msg.text() +"','"+ sign +"');";
         return (execute(sql.data(),nullptr));
     }
 
-    std::vector<andeme::schema::Message> MessageStorage::getAllMsg
-                                        (const std::function<bool(const andeme::schema::Message&)>& callback)
+    std::vector<andeme::schema::Message> MessageStorage::getAllMessages()
     {
-        execute("SELECT * FROM 'MESSAGES';", nullptr);
-        return std::vector<andeme::schema::Message>(); //заглушка
+        Callback callback;
+        execute("SELECT Message FROM 'MESSAGES';", callback);
+        return std::vector<andeme::schema::Message>();
     }
+
 
     int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
     {
@@ -65,5 +65,4 @@ namespace andeme {
             return 0;
         }
     }
-
 }

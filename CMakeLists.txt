@@ -92,7 +92,7 @@ target_link_libraries(AndemeCommon OpenSSL::SSL)
 
 #add SQLite3 library
 target_link_libraries(AndemeCommon SQLite::SQLite3)
-
+target_link_libraries(AndemeCommon schema gRPC::grpc++_unsecure)
 
 add_executable(AndemeCommonUnittests ${ANDEME_COMMON_TEST_SRCS})
 target_include_directories(AndemeCommonUnittests PRIVATE common ${GTEST_INCLUDE_DIRS})
@@ -107,7 +107,6 @@ target_link_libraries(AndemeClient schema gRPC::grpc++_unsecure AndemeCommon)
 
 
 # server application
-
 file(GLOB ANDEME_SERVER_SRCS server/*.cpp)
 add_executable(AndemeServer ${ANDEME_SERVER_SRCS})
 target_include_directories(AndemeServer PRIVATE schema server)

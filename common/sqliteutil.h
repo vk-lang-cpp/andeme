@@ -5,13 +5,13 @@
 #include <vector>
 #include <iostream>
 #include <functional>
-#include "message.pb.h"
+
+#include <schema/message.pb.h>
 
 namespace andeme {
 
     using Row = std::vector<std::string>;
     using Callback = std::function<bool(const std::vector<std::string>&)>;
-
     class SQLite3Storage {
     protected:
 
@@ -33,7 +33,7 @@ namespace andeme {
          MessageStorage(const std::string&);
          ~MessageStorage(){}
          bool add(const andeme::schema::Message&); // возвращает true если это новое сообщение, false если уже есть
-         std::vector<andeme::schema::Message> getAllMsg(const std::function<bool(const andeme::schema::Message&)>& callback); // передаёт в callback по одному все сообщения
+         std::vector<andeme::schema::Message> getAllMessages();// передаёт в callback по одному все сообщения
     };
 
         class SqliteGuard {
