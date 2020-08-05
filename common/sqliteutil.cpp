@@ -15,7 +15,7 @@ namespace andeme {
             "Signature	TEXT		NOT NULL ,UNIQUE(Timestamp,Message));";
 
         sqlite3_open_v2(filename.data(), &m_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
-        execute(sql.data(),nullptr);
+        execute(sql.data(),std::vector<andeme::schema::Message>()/*nullptr*/);
     }
 
     SQLite3Storage::~SQLite3Storage()
@@ -36,33 +36,30 @@ namespace andeme {
         std::string sign = "sign";
         std::string sql =  "INSERT INTO MESSAGES ('Timestamp', 'Author', 'Message','Signature') \
                 VALUES (datetime('now','localtime'),'"+ Author +"','"+ msg.text() +"','"+ sign +"');";
-        return (execute(sql.data(),nullptr));
+        return (execute(sql.data(),std::vector<andeme::schema::Message>()/*nullptr*/));
     }
 
     std::vector<andeme::schema::Message> MessageStorage::getAllMessages()
     {
         Callback callback;
-        execute("SELECT Message FROM 'MESSAGES';", callback);
-        return std::vector<andeme::schema::Message>();
-    }
 
+        execute("SELECT Message FROM 'MESSAGES' ", callback);
+            return callback;
+    }
 
     int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
     {
-        const andeme::Callback& callback = *static_cast<Callback*>(NotUsed);
+        andeme::Callback& callback = *static_cast<Callback*>(NotUsed);
 
-        std::vector<std::string> result;
-        result.reserve(argc);
+            andeme::schema::Message result;
 
-        for (size_t i = 0; i < argc; ++i) {
-            result.emplace_back(argv[i]);
-        }
-
-        if (callback(result)) {
-            return 1;
-        }
-        else {
-            return 0;
-        }
+            for (size_t i = 0; i < argc; ++i) {
+                result.set_text(argv[i]);
+                callback.emplace_back(result);
+            }
+            if (!callback.empty())
+                return SQLITE_OK;
+            else
+                return SQLITE_FAIL;
     }
 }

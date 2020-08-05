@@ -11,13 +11,16 @@
 namespace andeme {
 
     using Row = std::vector<std::string>;
-    using Callback = std::function<bool(const std::vector<std::string>&)>;
+    //using Callback = std::function<bool(const std::vector<std::string>&)>;
+    using Callback = std::vector<andeme::schema::Message>;
+
     class SQLite3Storage {
     protected:
 
         SQLite3Storage(const std::string&);
         ~SQLite3Storage();
         bool execute(const std::string& query, const Callback&);
+        bool getTable();
 
         //copying is prohibited
         SQLite3Storage(SQLite3Storage const &) = delete;
