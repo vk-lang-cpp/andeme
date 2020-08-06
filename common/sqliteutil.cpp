@@ -1,4 +1,3 @@
-#pragma once
 #include "sqliteutil.h"
 
 
@@ -8,10 +7,13 @@ namespace andeme {
     {
         static SqliteGuard guard;
 
+        //поле ID является уникальной для каждой строки и инкрементируется с каждой записью
+
         std::string sql = "CREATE table IF NOT EXISTS MESSAGES ("  \
-            "Timestamp	INTEGER		NOT NULL," \
-            "Author		TEXT		NOT NULL," \
-            "Message	TEXT		NOT NULL," \
+            "ID INTEGER PRIMARY KEY         ,"\
+            "Timestamp	INTEGER		NOT NULL,"\
+            "Author		TEXT		NOT NULL,"\
+            "Message	TEXT		NOT NULL,"\
             "Signature	TEXT		NOT NULL ,UNIQUE(Timestamp,Message));";
 
         sqlite3_open_v2(filename.data(), &m_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
@@ -32,6 +34,8 @@ namespace andeme {
 
     bool MessageStorage::add(const andeme::schema::Message & msg)
     {
+        // message Message { string text = 1;}
+
         std::string Author = "Author";
         std::string sign = "sign";
         std::string sql =  "INSERT INTO MESSAGES ('Timestamp', 'Author', 'Message','Signature') \
@@ -43,8 +47,11 @@ namespace andeme {
     {
         Callback callback;
 
-        execute("SELECT Message FROM 'MESSAGES' ", callback);
+        //сортировка по ID
+
+         execute("SELECT Message FROM 'MESSAGES' ORDER BY ID ASC", callback);
             return callback;
+
     }
 
     int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
