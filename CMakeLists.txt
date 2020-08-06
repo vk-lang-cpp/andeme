@@ -6,8 +6,10 @@ if (WIN32)
 add_definitions(/std:c++17 /D_WIN32_WINNT=0x600)
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-#if using release Visual studio configuration with compile /MT lib's
+
 if (MSVC)
+#using release Visual studio configuration with compile /MT lib's
+#comment next row if you build using a different configuration
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 endif()
 else ()
