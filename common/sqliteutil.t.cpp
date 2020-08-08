@@ -11,13 +11,10 @@ namespace {
 namespace fs = std::filesystem;
 
 struct TempDirectory {
-    std::string dirname;
-    TempDirectory() : dirname((std::filesystem::temp_directory_path()/"AndemeTMP\\").string()) {
+   std::filesystem::path dirname;
+   TempDirectory() : dirname(std::filesystem::temp_directory_path() / "AndemeTmp") {
         std::filesystem::create_directories(dirname);
-
     }
-    std::string getPath(){return dirname;}
-
     ~TempDirectory() {
         std::filesystem::remove_all(dirname);
     }
@@ -28,7 +25,9 @@ struct TempDirectory {
 TEST(Sqlite3DataBase, MessageAddTest) {//добавление одного сообщения
     {
         TempDirectory tmpfolder;
-        andeme::MessageStorage db(tmpfolder.getPath() + "testDatabase.db");
+        andeme::MessageStorage db( (tmpfolder.dirname / "testDatabase.db").string());
+        EXPECT_TRUE(fs::exists(tmpfolder.dirname / "testDatabase.db")); //проверка наличия файла
+
         andeme::schema::Message message;
         message.set_text("test_message");
         EXPECT_EQ(true, db.AddMessage(message));
@@ -38,7 +37,10 @@ TEST(Sqlite3DataBase, MessageAddTest) {//добавление одного со�
 TEST(Sqlite3DataBase,ReadMessageTest){ //проверка на запись/чтение вектора строк
     {
         TempDirectory tmpfolder;
-        andeme::MessageStorage db(tmpfolder.getPath() + "testDatabase.db");
+        andeme::MessageStorage db( (tmpfolder.dirname / "testDatabase.db").string());
+
+        EXPECT_TRUE(fs::exists(tmpfolder.dirname / "testDatabase.db"));
+
         std::vector<std::string> TestMessages  = {"one","two","three","four","five","six","seven","eight"};
         std::vector<andeme::schema::Message> testInbox(TestMessages.size());
 
