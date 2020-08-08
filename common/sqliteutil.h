@@ -11,29 +11,28 @@
 namespace andeme {
 
     using Row = std::vector<std::string>;
-    using Callback = std::function<bool(const std::vector<std::string>&)>;
+    using Callback = std::function<bool(const Row&)>;
 
-    class SQLite3Storage {
+    class SQLite3Common {
     protected:
-
-        SQLite3Storage(const std::string&);
-        ~SQLite3Storage();
-        bool execute(const std::string& query, const Callback&);
+        SQLite3Common();
+        ~SQLite3Common();
+        bool ExecuteQuery(const std::string& query, const Callback&);
 
         //copying is prohibited
-        SQLite3Storage(SQLite3Storage const &) = delete;
-        SQLite3Storage& operator=(SQLite3Storage const &) = delete;
+        SQLite3Common(SQLite3Common const &) = delete;
+        SQLite3Common& operator=(SQLite3Common const &) = delete;
 
-        sqlite3* m_db;
+        sqlite3* db_;
     };
 
-    class MessageStorage : public SQLite3Storage
+    class MessageStorage : public SQLite3Common
     {
     public:
          MessageStorage(const std::string&);
          ~MessageStorage();
-         bool add(const andeme::schema::Message&); // возвращает true если это новое сообщение, false если уже есть
-         std::vector<andeme::schema::Message> getAllMessages();// передаёт в callback по одному все сообщения
+         bool AddMessage(const andeme::schema::Message&);
+         std::vector<andeme::schema::Message> getAllMessages();
     };
 int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
 

@@ -31,7 +31,7 @@ TEST(Sqlite3DataBase, MessageAddTest) {//добавление одного со�
         andeme::MessageStorage db(tmpfolder.getPath() + "testDatabase.db");
         andeme::schema::Message message;
         message.set_text("test_message");
-        EXPECT_EQ(true, db.add(message));
+        EXPECT_EQ(true, db.AddMessage(message));
     }
 }
 
@@ -45,7 +45,7 @@ TEST(Sqlite3DataBase,ReadMessageTest){ //проверка на запись/чт
         //задаем текст входящих сообщений объектам Message и заполняем ими базу
         for (size_t i = 0; i < TestMessages.size(); ++i) {
             testInbox[i].set_text(TestMessages[i].data());
-            EXPECT_EQ(true, db.add(testInbox[i]));
+            EXPECT_EQ(true, db.AddMessage(testInbox[i]));
         }
 
         //получаем все значения из базы
