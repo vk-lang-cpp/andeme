@@ -10,32 +10,31 @@
 
 namespace andeme {
 
-    using Row = std::vector<std::string>;
-    using Callback = std::function<bool(const Row&)>;
+  using Row = std::vector<std::string>;
+  using Callback = std::function<bool(const Row&)>;
 
-    class SQLite3Common {
+  class SQLite3Common
+  {
     protected:
-        SQLite3Common();
-        ~SQLite3Common();
-        bool ExecuteQuery(const std::string& query, const Callback&);
+      SQLite3Common();
+      ~SQLite3Common();
+      bool ExecuteQuery(const std::string& query, const Callback&);
 
-        //copying is prohibited
-        SQLite3Common(SQLite3Common const &) = delete;
-        SQLite3Common& operator=(SQLite3Common const &) = delete;
+      //copying is prohibited
+      SQLite3Common(SQLite3Common const &) = delete;
+      SQLite3Common& operator=(SQLite3Common const &) = delete;
 
-        sqlite3* db_;
+      sqlite3* db_;
     };
 
-    class MessageStorage : public SQLite3Common
-    {
-    public:
-         MessageStorage(const std::string&);
-         ~MessageStorage();
-         bool AddMessage(const andeme::schema::Message&);
-         std::vector<andeme::schema::Message> getAllMessages();
+   class MessageStorage : public SQLite3Common
+   {
+     public:
+       MessageStorage(const std::string&);
+       ~MessageStorage();
+       bool AddMessage(const andeme::schema::Message&);
+       std::vector<andeme::schema::Message> getAllMessages();
     };
-int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
-
+  int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
 }
-
 #endif // ANDEME_COMMON_SQLITE_UTIL_H
