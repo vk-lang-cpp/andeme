@@ -5,14 +5,12 @@
 #include <algorithm>
 #include <filesystem>
 
-#define GTEST_COUT std::cerr << "[          ] [ INFO ]"
-
 namespace {
 namespace fs = std::filesystem;
 
 struct TempDirectory {
    std::filesystem::path dirname;
-   TempDirectory() : dirname(std::filesystem::temp_directory_path() / "AndemeTmp") {
+   TempDirectory() : dirname(fs::temp_directory_path() / "AndemeTmp") { // C:\Users\Username\AppData\Local\Temp\AndemeTmp
         std::filesystem::create_directories(dirname);
     }
     ~TempDirectory() {

@@ -1,6 +1,7 @@
 #include "sqliteutil.h"
 
 namespace  {
+//initializes the base and closes all connections to the base
   class SqliteGuard
   {
     public:

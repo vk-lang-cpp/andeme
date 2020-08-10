@@ -32,7 +32,11 @@ namespace andeme {
      public:
        MessageStorage(const std::string&);
        ~MessageStorage();
+
+       // returns true if this is a new message, false if there is already
        bool AddMessage(const andeme::schema::Message&);
+
+       // passes all messages to callback one by one
        std::vector<andeme::schema::Message> getAllMessages();
     };
   int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
