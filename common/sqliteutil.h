@@ -80,7 +80,8 @@ namespace andeme {
     int Execute() {
       return  sqlite3_step(stmt_);
     }
-    char* GetColumns(int column) { return (char*)sqlite3_column_text(stmt_,column); }
+    char* GetColumnText(int column) { return (char*)sqlite3_column_text(stmt_,column); }
+    int GetColumnInt(int column) { return sqlite3_column_int(stmt_,column); }
 
 
 

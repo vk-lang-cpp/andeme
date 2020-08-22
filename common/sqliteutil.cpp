@@ -117,7 +117,7 @@ namespace andeme {
 
        while (stmt.Execute() == SQLITE_ROW) {
            andeme::schema::Message msg;
-           msg.set_text(stmt.GetColumns(3));
+           msg.set_text(stmt.GetColumnText(3));
            messages.push_back(std::move(msg));
         }
        return messages;
