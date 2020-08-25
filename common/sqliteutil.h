@@ -20,13 +20,14 @@ namespace andeme {
      SQLite3Common();
      ~SQLite3Common();
      bool ExecuteQuery(const std::string& query, const Callback&);
-     bool PrepareQuery(Sqlite3Statement& ,const std::string&);
+     Sqlite3Statement PrepareQuery(const std::string&);
 
      //copying is prohibited
      SQLite3Common(SQLite3Common const &) = delete;
      SQLite3Common& operator=(SQLite3Common const &) = delete;
 
      sqlite3* db_;
+     std::map<std::string,Sqlite3Statement> mStmt;
    };
 
    class MessageStorage : public SQLite3Common
@@ -54,23 +55,22 @@ namespace andeme {
      Sqlite3Statement() = default;
 
      Sqlite3Statement(sqlite3_stmt *stmt)
-        : stmt_(stmt) { sqlite3_finalize(stmt); }
+         : stmt_(stmt, [](sqlite3_stmt *stmt) { sqlite3_finalize(stmt); }){};
 
-     ~Sqlite3Statement() {
-       sqlite3_finalize(stmt_); }
+     ~Sqlite3Statement() { }
 
      bool Bind(int index, const std::string &value) {
-         return 0 == sqlite3_bind_text(stmt_, index, value.data(),
+         return 0 == sqlite3_bind_text(stmt_.get(), index, value.data(),
                                       value.size(), nullptr);
      }
 
      bool Bind(int index, const int &value) {
-         return 0 == sqlite3_bind_int(stmt_, index, value);
+         return 0 == sqlite3_bind_int(stmt_.get(), index, value);
      }
 
      template<typename T>
      bool Bind(const std::string &name, const T &value) {
-        int index = sqlite3_bind_parameter_index(stmt_, name.data());
+        int index = sqlite3_bind_parameter_index(stmt_.get(), name.data());
         if (index == 0) {
            return false;
         }
@@ -78,20 +78,20 @@ namespace andeme {
       }
 
     int Execute() {
-      return  sqlite3_step(stmt_);
+      return  sqlite3_step(stmt_.get());
     }
-    char* GetColumnText(int column) { return (char*)sqlite3_column_text(stmt_,column); }
-    int GetColumnInt(int column) { return sqlite3_column_int(stmt_,column); }
+    char* GetColumnText(int column) { return (char*)sqlite3_column_text(stmt_.get(),column); }
+    int GetColumnInt(int column) { return sqlite3_column_int(stmt_.get(),column); }
 
 
 
-    void Reset() { sqlite3_reset(stmt_); }
+    void Reset() { sqlite3_reset(stmt_.get()); }
 
     friend class SQLite3Common;
 
   private:
-    inline sqlite3_stmt *Stmt() { return stmt_; }
-    sqlite3_stmt* stmt_;
+    inline sqlite3_stmt *Stmt() { return stmt_.get(); }
+    std::shared_ptr<sqlite3_stmt>stmt_;
   };
 }
 #endif // ANDEME_COMMON_SQLITE_UTIL_H
