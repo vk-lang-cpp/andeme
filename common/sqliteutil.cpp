@@ -49,36 +49,7 @@ namespace andeme {
         return Sqlite3Statement();
   }
 
-  MessageStorage::MessageStorage(const std::string & dbname) : SQLite3Storage(dbname){
-
-    const std::string sql = "CREATE table IF NOT EXISTS MESSAGES ("
-                            "ID INTEGER PRIMARY KEY,"
-                            "Message TEXT NOT NULL);";
-
-    ExecuteQuery(sql.data(),nullptr);
-  }
-
-  bool MessageStorage::AddMessage(const andeme::schema::Message & msg){
-    std::string Author = "Author";
-    std::string sign = "sign";
-    std::string sql =  "INSERT INTO MESSAGES ('Message')"
-                       "VALUES ('"+ msg.text() +"');";
-
-    return (ExecuteQuery(sql.data(),nullptr));
-  }
-
-  std::vector<andeme::schema::Message> MessageStorage::getAllMessages(){
-    std::vector<andeme::schema::Message> messages;
-
-    ExecuteQuery("SELECT Message FROM 'MESSAGES' ORDER BY ID ASC",[&messages](const Row& row)->bool{
-      andeme::schema::Message msg;
-      msg.set_text(row[0]);
-      messages.push_back(std::move(msg));
-      return true;});
-    return messages;
-  }
-
-  MessageStorage_v2::MessageStorage_v2(const std::string& dbname): SQLite3Storage(dbname){
+  MessageStorage::MessageStorage(const std::string& dbname): SQLite3Storage(dbname){
     const std::string sql = "CREATE table IF NOT EXISTS MESSAGES ("
                             "ID INTEGER PRIMARY KEY,"
                             "Message TEXT NOT NULL);";
@@ -91,9 +62,9 @@ namespace andeme {
                                  "VALUES (@msg);");
     selectStmt_ = PrepareQuery("SELECT * FROM 'MESSAGES' ORDER BY ID ASC;");
   }
-  bool MessageStorage_v2::AddMessage(const andeme::schema::Message& msg){
+  bool MessageStorage::AddMessage(const andeme::schema::Message& msg){
     if (insertStmt_.isValid()){
-      if (!insertStmt_.Bind("@msg",msg.text().data())){
+      if (!insertStmt_.Bind("@msg",msg.text())){
         return false;
       }
       if (insertStmt_.Execute()!= SQLITE_DONE){
@@ -106,7 +77,7 @@ namespace andeme {
         return false;
   }
 
-  std::vector<andeme::schema::Message> MessageStorage_v2::getAllMessages(){
+  std::vector<andeme::schema::Message> MessageStorage::getAllMessages(){
     if (selectStmt_.isValid()){
       std::vector<andeme::schema::Message> messages;
       while (selectStmt_.Execute() == SQLITE_ROW) {

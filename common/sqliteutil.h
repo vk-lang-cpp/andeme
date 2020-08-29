@@ -77,20 +77,11 @@ class Sqlite3Statement
      Sqlite3Statement selectStmt_;
    };
 
-   class MessageStorage : public SQLite3Storage
-   {
-    public:
-       MessageStorage(const std::string&);
-       ~MessageStorage(){}
-       bool AddMessage(const andeme::schema::Message&);
-       std::vector<andeme::schema::Message> getAllMessages();
-    };
-
-  class MessageStorage_v2 : public SQLite3Storage
+  class MessageStorage : public SQLite3Storage
   {
     public:
-      MessageStorage_v2(const std::string&);
-      ~MessageStorage_v2(){}
+      MessageStorage(const std::string&);
+      ~MessageStorage(){}
       bool AddMessage(const andeme::schema::Message&);
       std::vector<andeme::schema::Message> getAllMessages();
   };
