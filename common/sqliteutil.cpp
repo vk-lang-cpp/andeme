@@ -51,16 +51,14 @@ namespace andeme {
 
   MessageStorage::MessageStorage(const std::string& dbname): SQLite3Storage(dbname){
     const std::string sql = "CREATE table IF NOT EXISTS MESSAGES ("
-                            "ID INTEGER PRIMARY KEY,"
                             "Message TEXT NOT NULL);";
 
     ExecuteQuery(sql.data(),nullptr);
 
-    //preparing and collect prepared statements
-
+    //preparing statements
     insertStmt_ = PrepareQuery("INSERT INTO MESSAGES ('Message')"
                                  "VALUES (@msg);");
-    selectStmt_ = PrepareQuery("SELECT * FROM 'MESSAGES' ORDER BY ID ASC;");
+    selectStmt_ = PrepareQuery("SELECT * FROM 'MESSAGES';");
   }
   bool MessageStorage::AddMessage(const andeme::schema::Message& msg){
     if (insertStmt_.isValid()){
@@ -82,7 +80,7 @@ namespace andeme {
       std::vector<andeme::schema::Message> messages;
       while (selectStmt_.Execute() == SQLITE_ROW) {
         andeme::schema::Message msg;
-        msg.set_text(selectStmt_.GetColumnText(1));
+        msg.set_text(selectStmt_.GetColumnText(0));
         messages.push_back(std::move(msg));
       }
       selectStmt_.Reset();
