@@ -12,46 +12,57 @@ namespace  {
           sqlite3_shutdown();
       }
   };
+
+  int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName){
+    Callback& callback = *static_cast<Callback*>(NotUsed);
+
+    Row row;
+
+    for (size_t i = 0; i < argc; ++i)
+      row.push_back(argv[i]);
+
+    if (callback(row))
+      return SQLITE_OK;
+  }
 }
 
 namespace andeme {
 
-  SQLite3Common::SQLite3Common(){
+  SQLite3Storage::SQLite3Storage(const std::string& dbname){
     static SqliteGuard guard;
+    sqlite3_open_v2(dbname.data(), &db_, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
   }
 
-  SQLite3Common::~SQLite3Common(){
+  SQLite3Storage::~SQLite3Storage(){
     sqlite3_close_v2(db_);
   }
 
-  bool SQLite3Common::ExecuteQuery(const std::string& query,const Callback& callback){
+  bool SQLite3Storage::ExecuteQuery(const std::string& query,const Callback& callback){
     return (SQLITE_OK == sqlite3_exec(db_, query.c_str(), sqlite_callback, (void *)(&callback), nullptr));
   }
 
-  Sqlite3Statement SQLite3Common::PrepareQuery(const std::string& data){
+  Sqlite3Statement SQLite3Storage::PrepareQuery(const std::string& data){
     sqlite3_stmt* stmt;
-    sqlite3_prepare_v2(db_, data.data(), -1,&stmt, nullptr);
-    return Sqlite3Statement(stmt);
+    if (sqlite3_prepare_v2(db_, data.data(), -1,&stmt, nullptr) == SQLITE_OK)
+        return Sqlite3Statement(stmt);
+    else
+        return Sqlite3Statement();
   }
 
-  MessageStorage::MessageStorage(const std::string & dbname){
+  MessageStorage::MessageStorage(const std::string & dbname) : SQLite3Storage(dbname){
 
     const std::string sql = "CREATE table IF NOT EXISTS MESSAGES ("
                             "ID INTEGER PRIMARY KEY,"
-                            "Timestamp INTEGER NOT NULL,"
-                            "Author TEXT NOT NULL,"
-                            "Message TEXT NOT NULL,"
-                            "Signature TEXT NOT NULL ,UNIQUE(Timestamp,Message));";
+                            "Message TEXT NOT NULL);";
 
-    sqlite3_open_v2(dbname.data(), &db_, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
     ExecuteQuery(sql.data(),nullptr);
   }
 
   bool MessageStorage::AddMessage(const andeme::schema::Message & msg){
     std::string Author = "Author";
     std::string sign = "sign";
-    std::string sql =  "INSERT INTO MESSAGES ('Timestamp', 'Author', 'Message','Signature')"
-                       "VALUES (datetime('now','localtime'),'"+ Author +"','"+ msg.text() +"','"+ sign +"');";
+    std::string sql =  "INSERT INTO MESSAGES ('Message')"
+                       "VALUES ('"+ msg.text() +"');";
 
     return (ExecuteQuery(sql.data(),nullptr));
   }
@@ -67,78 +78,46 @@ namespace andeme {
     return messages;
   }
 
-  MessageStorage_v2::MessageStorage_v2(const std::string& dbname){
+  MessageStorage_v2::MessageStorage_v2(const std::string& dbname): SQLite3Storage(dbname){
     const std::string sql = "CREATE table IF NOT EXISTS MESSAGES ("
                             "ID INTEGER PRIMARY KEY,"
-                            "Timestamp INTEGER NOT NULL,"
-                            "Author TEXT NOT NULL,"
-                            "Message TEXT NOT NULL,"
-                            "Signature TEXT NOT NULL ,UNIQUE(Timestamp,Message));";
+                            "Message TEXT NOT NULL);";
 
-    sqlite3_open_v2(dbname.data(), &db_, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
     ExecuteQuery(sql.data(),nullptr);
 
     //preparing and collect prepared statements
-    mStmt.insert(std::make_pair("insert",PrepareQuery("INSERT INTO MESSAGES ('Timestamp','Author', 'Message','Signature')"
-                                 "VALUES (@time,@author,@msg,@sign);")));
 
-    mStmt.insert(std::make_pair("select",PrepareQuery("SELECT * FROM 'MESSAGES' ORDER BY ID ASC;")));
-
+    insertStmt_ = PrepareQuery("INSERT INTO MESSAGES ('Message')"
+                                 "VALUES (@msg);");
+    selectStmt_ = PrepareQuery("SELECT * FROM 'MESSAGES' ORDER BY ID ASC;");
   }
   bool MessageStorage_v2::AddMessage(const andeme::schema::Message& msg){
-    auto it = mStmt.find("insert");
-    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-    time_t now_t = std::chrono::system_clock::to_time_t(now);
-
-    std::string Author = "Author";
-    std::string sign = "sign";
-
-    if (!it->second.Bind("@time",now_t)){
-      return false;
+    if (insertStmt_.isValid()){
+      if (!insertStmt_.Bind("@msg",msg.text().data())){
+        return false;
+      }
+      if (insertStmt_.Execute()!= SQLITE_DONE){
+        return false;
+      }
+      insertStmt_.Reset();
+      return true;
     }
-
-    if (!it->second.Bind("@author",Author.data())){
-      return false;
-    }
-
-    if (!it->second.Bind("@msg",msg.text().data())){
-      return false;
-    }
-
-    if (!it->second.Bind("@sign",sign.data())){
-      return false;
-    }
-
-    if (it->second.Execute()!= SQLITE_DONE){
-      return false;
-    }
-
-    it->second.Reset();
-     return true;
-    }
+    else
+        return false;
+  }
 
   std::vector<andeme::schema::Message> MessageStorage_v2::getAllMessages(){
-    std::vector<andeme::schema::Message> messages;
-    auto it = mStmt.find("select");
-    while (it->second.Execute() == SQLITE_ROW) {
-      andeme::schema::Message msg;
-      msg.set_text(it->second.GetColumnText(3));
-      messages.push_back(std::move(msg));
+    if (selectStmt_.isValid()){
+      std::vector<andeme::schema::Message> messages;
+      while (selectStmt_.Execute() == SQLITE_ROW) {
+        andeme::schema::Message msg;
+        msg.set_text(selectStmt_.GetColumnText(1));
+        messages.push_back(std::move(msg));
+      }
+      selectStmt_.Reset();
+      return messages;
     }
-    it->second.Reset();
-
-    return messages;
+    std::vector<andeme::schema::Message>();
   }
 
-  static int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName){
-    andeme::Callback& callback = *static_cast<Callback*>(NotUsed);
-
-    Row row;
-
-    for (size_t i = 0; i < argc; ++i)
-      row.push_back(argv[i]);
-
-    if (callback(row))
-      return SQLITE_OK;
-  }
 }
