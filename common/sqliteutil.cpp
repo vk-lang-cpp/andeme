@@ -53,7 +53,7 @@ namespace andeme {
     const std::string sql = "CREATE table IF NOT EXISTS MESSAGES ("
                             "Message TEXT NOT NULL);";
 
-    ExecuteQuery(sql.data(),nullptr);
+    ExecuteQuery(sql,nullptr);
 
     //preparing statements
     insertStmt_ = PrepareQuery("INSERT INTO MESSAGES ('Message')"
