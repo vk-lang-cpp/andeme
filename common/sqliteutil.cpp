@@ -18,11 +18,13 @@ namespace  {
 
     Row row;
 
-    for (size_t i = 0; i < argc; ++i)
+    for (int i = 0; i < argc; ++i)
       row.push_back(argv[i]);
 
     if (callback(row))
       return SQLITE_OK;
+    else
+      return SQLITE_ERROR;
   }
 }
 
@@ -30,7 +32,8 @@ namespace andeme {
 
   SQLite3Storage::SQLite3Storage(const std::string& dbname){
     static SqliteGuard guard;
-    sqlite3_open_v2(dbname.data(), &db_, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
+    if (sqlite3_open_v2(dbname.data(), &db_, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr)!=SQLITE_OK)
+        throw std::runtime_error(std::string(sqlite3_errmsg(db_)));
   }
 
   SQLite3Storage::~SQLite3Storage(){
@@ -46,7 +49,7 @@ namespace andeme {
     if (sqlite3_prepare_v2(db_, data.data(), -1,&stmt, nullptr) == SQLITE_OK)
         return Sqlite3Statement(stmt);
     else
-        return Sqlite3Statement();
+        throw std::runtime_error(std::string(sqlite3_errmsg(db_)));
   }
 
   MessageStorage::MessageStorage(const std::string& dbname): SQLite3Storage(dbname){
@@ -60,25 +63,28 @@ namespace andeme {
                                  "VALUES (@msg);");
     selectStmt_ = PrepareQuery("SELECT * FROM 'MESSAGES';");
   }
+
   bool MessageStorage::AddMessage(const andeme::schema::Message& msg){
     if (insertStmt_.isValid()){
       if (!insertStmt_.Bind("@msg",msg.text())){
         return false;
       }
+
       if (insertStmt_.Execute()!= SQLITE_DONE){
         return false;
       }
+
       insertStmt_.Reset();
       return true;
     }
     else
-        return false;
+      return false;
   }
 
   std::vector<andeme::schema::Message> MessageStorage::getAllMessages(){
     if (selectStmt_.isValid()){
       std::vector<andeme::schema::Message> messages;
-      while (selectStmt_.Execute() == SQLITE_ROW) {
+      while (selectStmt_.Execute() == SQLITE_ROW){
         andeme::schema::Message msg;
         msg.set_text(selectStmt_.GetColumnText(0));
         messages.push_back(std::move(msg));
@@ -86,7 +92,7 @@ namespace andeme {
       selectStmt_.Reset();
       return messages;
     }
-    std::vector<andeme::schema::Message>();
+    return std::vector<andeme::schema::Message>();
   }
 
 }
