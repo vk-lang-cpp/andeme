@@ -1,17 +1,16 @@
 #include "sqliteutil.h"
-#include <chrono>
-#include <ctime>
+
 namespace  {
   class SqliteGuard
   {
     public:
-      SqliteGuard() {
-        sqlite3_initialize();
-      }
-        ~SqliteGuard() {
-          sqlite3_shutdown();
-      }
-  };
+     SqliteGuard() {
+       sqlite3_initialize();
+     }
+       ~SqliteGuard() {
+         sqlite3_shutdown();
+     }
+  };  //namespace
 
   int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName){
     Callback& callback = *static_cast<Callback*>(NotUsed);
@@ -26,7 +25,7 @@ namespace  {
     else
       return SQLITE_ERROR;
   }
-}
+}  //namespace
 
 namespace andeme {
 
@@ -95,4 +94,4 @@ namespace andeme {
     return std::vector<andeme::schema::Message>();
   }
 
-}
+}  // namespace andeme
