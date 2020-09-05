@@ -4,6 +4,14 @@ project(Andeme)
 
 if (WIN32)
 add_definitions(/std:c++17 /D_WIN32_WINNT=0x600)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+
+if (MSVC)
+#using release Visual studio configuration with compile /MT lib's
+#comment next row if you build using a different configuration
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+endif()
 else ()
 add_definitions(-std=c++17 -fPIC)
 endif()
@@ -24,7 +32,7 @@ find_package(gRPC CONFIG REQUIRED PATHS ${THIRDPARTY_PATH}/grpc)
 find_package(OpenSSL 1.1 REQUIRED)
 enable_testing()
 find_package(GTest REQUIRED PATHS ${THIRDPARTY_PATH}/gtest)
-
+find_package(SQLite3 REQUIRED PATHS ${THIRDPARTY_PATH}/SQLite3)
 
 find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin PATHS ${THIRDPARTY_PATH}/grpc/bin)
 if(NOT GRPC_CPP_PLUGIN)
@@ -84,6 +92,9 @@ add_library(AndemeCommon ${ANDEME_COMMON_SRCS})
 target_include_directories(AndemeCommon PRIVATE common)
 target_link_libraries(AndemeCommon OpenSSL::SSL)
 
+#add SQLite3 library
+target_link_libraries(AndemeCommon SQLite::SQLite3 schema gRPC::grpc++_unsecure)
+
 add_executable(AndemeCommonUnittests ${ANDEME_COMMON_TEST_SRCS})
 target_include_directories(AndemeCommonUnittests PRIVATE common ${GTEST_INCLUDE_DIRS})
 target_link_libraries(AndemeCommonUnittests AndemeCommon
@@ -97,7 +108,6 @@ target_link_libraries(AndemeClient schema gRPC::grpc++_unsecure AndemeCommon)
 
 
 # server application
-
 file(GLOB ANDEME_SERVER_SRCS server/*.cpp)
 add_executable(AndemeServer ${ANDEME_SERVER_SRCS})
 target_include_directories(AndemeServer PRIVATE schema server)

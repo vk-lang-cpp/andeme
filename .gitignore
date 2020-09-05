@@ -35,6 +35,7 @@
 thirdparty/grpc
 thirdparty/gtest
 thirdparty/qt5
+thirdparty/SQLite3
 
 # Build
 /build
