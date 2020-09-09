@@ -1,6 +1,17 @@
 syntax = "proto3";
 package andeme.schema;
 
-message Message {
+import "schema/userinfo.proto";
+
+message ChatMessage {
     string text = 1;
+}
+
+message Message {
+	string author = 1;
+	string signature = 2;
+	oneof signedMessage{
+	ChatMessage msg = 3;
+	UserInfo info = 4;
+	}
 }
