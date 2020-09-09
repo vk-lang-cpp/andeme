@@ -19,8 +19,8 @@ class MessageManager : public QObject {
         client_(address),
         input_(input),
         output_(output) {
-        client_.subscribe([this](const andeme::schema::Message& msg) {
-            output_(msg.text());
+        client_.subscribe([this](andeme::schema::Message& msg) {
+            output_(msg.mutable_msg()->text());
         });
    }
 
@@ -29,7 +29,7 @@ class MessageManager : public QObject {
         std::string text = input_();
         if (!text.empty()) {
             andeme::schema::Message msg;
-            msg.set_text(text);
+            msg.mutable_msg()->set_text(text);
             client_.send(msg);
         }
     }

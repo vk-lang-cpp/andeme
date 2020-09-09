@@ -13,7 +13,7 @@ namespace andeme {
 
 class Client {
  public:
-  using Callback = std::function<void(const andeme::schema::Message &)>;
+  using Callback = std::function<void(andeme::schema::Message &)>;
 
   Client(const std::string &address);
 

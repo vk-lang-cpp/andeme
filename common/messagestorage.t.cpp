@@ -30,7 +30,7 @@ TEST(MessageStorage, MessageAddTest) {  //добавление одного со
                                "testDatabase.db"));  //проверка наличия файла
 
         andeme::schema::Message message;
-        message.set_text("test_message");
+        message.mutable_msg()->set_text("test_message");
         ASSERT_TRUE(db.AddMessage(message));
     }
 }
@@ -50,7 +50,7 @@ TEST(MessageStorage,
 
         //задаем текст входящих сообщений объектам Message и заполняем ими базу
         for (size_t i = 0; i < TestMessages.size(); ++i) {
-            testInbox[i].set_text(TestMessages[i]);
+            testInbox[i].mutable_msg()->set_text(TestMessages[i]);
             ASSERT_TRUE(db.AddMessage(testInbox[i]));
         }
 
@@ -61,8 +61,8 @@ TEST(MessageStorage,
 
         //сравниваем текст сообщений,сортировка по ID
         for (size_t i = 0; i < TestMessages.size(); i++) {
-            EXPECT_STREQ(testInbox[i].text().c_str(),
-                         testOutbox[i].text().c_str());
+            EXPECT_STREQ(testInbox[i].mutable_msg()->text().c_str(),
+                         testOutbox[i].mutable_msg()->text().c_str());
         }
     }
 }

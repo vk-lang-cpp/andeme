@@ -10,7 +10,7 @@ namespace andeme {
 class MessageStorage : public SQLite3Storage {
    public:
     MessageStorage(const std::string &);
-    bool AddMessage(const andeme::schema::Message &);
+    bool AddMessage(andeme::schema::Message &);
     std::vector<andeme::schema::Message> GetAllMessages() const;
 
    private:
