@@ -1,8 +1,8 @@
 #include "settingutil.h"
-
+namespace andeme {
 settingutil::settingutil():m_settings("settings.ini",QSettings::IniFormat)
 {
-
+    SetDefaultSettings();
     ReadSettings();
 }
 
@@ -14,10 +14,11 @@ void settingutil::ReadSettings(){
 
 void settingutil::WriteSettings(){
     m_settings.beginGroup("/Settings") ;
-    m_settings.setValue("/text",m_address);
+    m_settings.setValue("/Server",m_address);
     m_settings.endGroup();
 }
 
 void settingutil::SetDefaultSettings(){
-    m_address = "0.0.0.0:123456";
+    m_address = "localhost:12345";
+}
 }
