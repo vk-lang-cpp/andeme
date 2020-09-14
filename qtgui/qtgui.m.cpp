@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QPushButton>
 #include <ui_qtgui.h>
 #include <iostream>
 #include <QObject>
