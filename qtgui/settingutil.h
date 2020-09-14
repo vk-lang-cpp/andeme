@@ -11,10 +11,12 @@ public:
     void ReadSettings();
     void WriteSettings();
     void SetDefaultSettings();
-    std::string getaddress(){return m_address.toStdString();}
+    std::string getHostname();
+    std::string getUsername();
 private:
     QSettings m_settings;
-    QString m_address;
+    QString m_hostname;
+    QString m_username;
 };
 }
 

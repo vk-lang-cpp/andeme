@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QPushButton>
 #include <ui_qtgui.h>
 #include <iostream>
 #include <QObject>
@@ -16,7 +15,7 @@ int main(int argc, char **argv) {
     widget.show();
 
     MessageManager m(
-        settings.getaddress(),
+        settings.getHostname(),
         [&ui]() -> std::string { 
             std::string msg = ui.inputMessage->toPlainText().toStdString();
             ui.inputMessage->clear();
