@@ -23,12 +23,13 @@ bool MessageStorage::AddMessage(andeme::schema::Message &msg) {
     }
 
     insertStmt_.Reset();
-
-    if (!insertStmt_.Bind("@msg", msg.mutable_msg()->text())) {
-        return false;
+    if(msg.signedMessage_case() == msg.kMsg){
+       if (!insertStmt_.Bind("@msg", msg.mutable_msg()->text())) {
+           return false;
+       }
+       return insertStmt_.Execute();
     }
-
-    return insertStmt_.Execute();
+    return false;
 }
 
 std::vector<andeme::schema::Message> MessageStorage::GetAllMessages() const {
@@ -37,8 +38,8 @@ std::vector<andeme::schema::Message> MessageStorage::GetAllMessages() const {
     if (selectStmt_) {
         while (selectStmt_.Step()) {
             andeme::schema::Message msg;
-            msg.mutable_msg()->set_text(selectStmt_.GetColumnText(0));
-            messages.push_back(std::move(msg));
+             msg.mutable_msg()->set_text(selectStmt_.GetColumnText(0));
+             messages.push_back(std::move(msg));
         }
         selectStmt_.Reset();
     }

@@ -61,6 +61,7 @@ TEST(MessageStorage,
 
         //сравниваем текст сообщений,сортировка по ID
         for (size_t i = 0; i < TestMessages.size(); i++) {
+            ASSERT_EQ(testInbox[i].signedMessage_case(),testInbox[i].kMsg);
             EXPECT_STREQ(testInbox[i].mutable_msg()->text().c_str(),
                          testOutbox[i].mutable_msg()->text().c_str());
         }

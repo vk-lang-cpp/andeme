@@ -20,7 +20,8 @@ class MessageManager : public QObject {
         input_(input),
         output_(output) {
         client_.subscribe([this](andeme::schema::Message& msg) {
-            output_(msg.mutable_msg()->text());
+            if(msg.signedMessage_case() == msg.kMsg)
+                output_(msg.mutable_msg()->text());
         });
    }
 
