@@ -4,9 +4,11 @@
 #include <iostream>
 #include <QObject>
 #include <messagemanager.h>
+#include <settingutil.h>
 
 
 int main(int argc, char **argv) {
+    andeme::settingutil settings;
     QApplication app(argc, argv);
     QMainWindow widget;
     Ui::MainWindow ui;
@@ -14,7 +16,7 @@ int main(int argc, char **argv) {
     widget.show();
 
     MessageManager m(
-        "localhost:12345",
+        settings.getHostname(),
         [&ui]() -> std::string { 
             std::string msg = ui.inputMessage->toPlainText().toStdString();
             ui.inputMessage->clear();
