@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     );
 
     QObject::connect(
-        ui.sendMessage, SIGNAL(released()),
+        ui.sendMessage, SIGNAL(clicked()),
         &m, SLOT(send()));
 
     return app.exec();
