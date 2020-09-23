@@ -1,14 +1,13 @@
-#include <QApplication>
-#include <QPushButton>
-#include <ui_qtgui.h>
-#include <iostream>
-#include <QObject>
 #include <messagemanager.h>
-#include <settingutil.h>
+#include <settings.h>
+#include <ui_qtgui.h>
+#include <QApplication>
+#include <QObject>
+#include <QPushButton>
+#include <iostream>
 
-
-int main(int argc, char **argv) {
-    andeme::settingutil settings;
+int main(int argc, char** argv) {
+    andeme::Settings settings;
     QApplication app(argc, argv);
     QMainWindow widget;
     Ui::MainWindow ui;
@@ -16,20 +15,17 @@ int main(int argc, char **argv) {
     widget.show();
 
     MessageManager m(
-        settings.getHostname(),
-        [&ui]() -> std::string { 
+        settings.Hostname(),
+        [&ui]() -> std::string {
             std::string msg = ui.inputMessage->toPlainText().toStdString();
             ui.inputMessage->clear();
             return msg;
         },
         [&ui](const std::string& msg) -> void {
             ui.outputMessages->append(msg.c_str());
-        }
-    );
+        });
 
-    QObject::connect(
-        ui.sendMessage, SIGNAL(released()),
-        &m, SLOT(send()));
+    QObject::connect(ui.sendMessage, SIGNAL(released()), &m, SLOT(send()));
 
     return app.exec();
 }
