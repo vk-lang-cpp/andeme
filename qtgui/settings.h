@@ -1,5 +1,5 @@
-#ifndef QTGUI_SETTINGUTIL_H_
-#define QTGUI_SETTINGUTIL_H_
+#ifndef QTGUI_SETTINGS_H_
+#define QTGUI_SETTINGS_H_
 #include <QSettings>
 
 // TODO: сделать ui для настройки
@@ -28,4 +28,4 @@ class Settings {
 };
 }  // namespace andeme
 
-#endif  // QTGUI_SETTINGUTIL_H_
+#endif  // QTGUI_SETTINGS_H_
