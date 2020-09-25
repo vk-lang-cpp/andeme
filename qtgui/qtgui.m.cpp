@@ -5,6 +5,8 @@
 #include <QObject>
 #include <QPushButton>
 #include <iostream>
+//спрятать подальше,т.к создаватся окно будет динамически
+#include <settingdialog.h>
 
 int main(int argc, char** argv) {
     andeme::Settings settings;
@@ -15,7 +17,7 @@ int main(int argc, char** argv) {
     widget.show();
 
     MessageManager m(
-        settings.Hostname(),
+        (settings.Hostname()+":"+settings.Portname()),
         [&ui]() -> std::string {
             std::string msg = ui.inputMessage->toPlainText().toStdString();
             ui.inputMessage->clear();
@@ -25,6 +27,13 @@ int main(int argc, char** argv) {
             ui.outputMessages->append(msg.c_str());
         });
 
+
+    QObject::connect(ui.settingButton,&QPushButton::clicked,[](){
+        //добавить предка
+        static SettingWindow* ad = new SettingWindow;
+        ad->show();
+
+    });
     QObject::connect(ui.sendMessage, SIGNAL(released()), &m, SLOT(send()));
 
     return app.exec();
