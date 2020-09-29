@@ -95,10 +95,12 @@ target_link_libraries(AndemeCommon OpenSSL::SSL)
 #add SQLite3 library
 target_link_libraries(AndemeCommon SQLite::SQLite3 schema gRPC::grpc++_unsecure)
 
+#add Unittests
 add_executable(AndemeCommonUnittests ${ANDEME_COMMON_TEST_SRCS})
 target_include_directories(AndemeCommonUnittests PRIVATE common ${GTEST_INCLUDE_DIRS})
 target_link_libraries(AndemeCommonUnittests AndemeCommon
     GTest::gtest GTest::gtest_main)
+target_link_libraries(AndemeCommonUnittests Qt5::Widgets)
 
 # client library
 file(GLOB ANDEME_CLIENT_SRCS client/*.cpp)
