@@ -7,6 +7,7 @@ namespace andeme {
 class Settings {
    public:
     Settings();
+    //Settings(char*);
     ~Settings() { WriteSettings(); }
     void ReadSettings();
     void WriteSettings();

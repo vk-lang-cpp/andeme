@@ -100,7 +100,6 @@ add_executable(AndemeCommonUnittests ${ANDEME_COMMON_TEST_SRCS})
 target_include_directories(AndemeCommonUnittests PRIVATE common ${GTEST_INCLUDE_DIRS})
 target_link_libraries(AndemeCommonUnittests AndemeCommon
     GTest::gtest GTest::gtest_main)
-target_link_libraries(AndemeCommonUnittests Qt5::Widgets)
 
 # client library
 file(GLOB ANDEME_CLIENT_SRCS client/*.cpp)
@@ -119,8 +118,24 @@ target_link_libraries(AndemeServer schema gRPC::grpc++_unsecure AndemeCommon)
 file(GLOB ANDEME_QT_GUI_SRCS qtgui/*.cpp qtgui/*.h)
 file(GLOB ANDEME_QT_GUI_UI qtgui/*.ui)
 
+file(GLOB ANDEME_QT_CLIENT_TEST_SRCS qtgui/*.t.cpp)
+list(REMOVE_ITEM ANDEME_QT_GUI_SRCS ${ANDEME_QT_CLIENT_TEST_SRCS})
+
 qt5_wrap_ui(ANDEME_QT_GUI_SRCS ${ANDEME_QT_GUI_UI})
 
 add_executable(AndemeQtGui ${ANDEME_QT_GUI_SRCS})
 target_link_libraries(AndemeQtGui Qt5::Widgets AndemeClient)
 target_include_directories(AndemeQtGui PRIVATE qtgui)
+
+#TODO сделать привязку к библиотеке settings
+
+#add QtClientUnittests
+add_executable(AndemeQtClientUnittests ${ANDEME_QT_CLIENT_TEST_SRCS})
+target_link_libraries(AndemeQtClientUnittests
+    GTest::gtest GTest::gtest_main)
+target_link_libraries(AndemeQtClientUnittests Qt5::Widgets)
+
+
+
+
+

@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <memory>
 
-#include "qtgui/settings.h"
+#include "settings.h"
 
 #define GTEST_COUT std::cerr << "[          ] [ INFO ]"
 
@@ -21,6 +21,8 @@ struct TempDirectory {
 };
 }  // namespace
 
-TEST(Settings, settingTest) {  //добавление одного сообщения
-    ASSERT_EQ(1, 1);
+TEST(Settings, settingTest) {
+    {
     }
+  }
+
