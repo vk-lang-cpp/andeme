@@ -119,21 +119,26 @@ file(GLOB ANDEME_QT_GUI_SRCS qtgui/*.cpp qtgui/*.h)
 file(GLOB ANDEME_QT_GUI_UI qtgui/*.ui)
 
 file(GLOB ANDEME_QT_CLIENT_TEST_SRCS qtgui/*.t.cpp)
+file(GLOB ANDEME_QT_SETTINGS_SRCS qtgui/settings.cpp qtgui/settings.h)
 list(REMOVE_ITEM ANDEME_QT_GUI_SRCS ${ANDEME_QT_CLIENT_TEST_SRCS})
+list(REMOVE_ITEM ANDEME_QT_GUI_SRCS ${ANDEME_QT_SETTINGS_SRCS})
+
+# add Qtsetting lib
+add_library(AndemeQtSettings ${ANDEME_QT_SETTINGS_SRCS})
+target_link_libraries(AndemeQtSettings Qt5::Widgets)
+target_include_directories(AndemeQtSettings PRIVATE qtgui)
 
 qt5_wrap_ui(ANDEME_QT_GUI_SRCS ${ANDEME_QT_GUI_UI})
 
 add_executable(AndemeQtGui ${ANDEME_QT_GUI_SRCS})
-target_link_libraries(AndemeQtGui Qt5::Widgets AndemeClient)
+target_link_libraries(AndemeQtGui Qt5::Widgets AndemeClient AndemeQtSettings)
 target_include_directories(AndemeQtGui PRIVATE qtgui)
-
-#TODO сделать привязку к библиотеке settings
 
 #add QtClientUnittests
 add_executable(AndemeQtClientUnittests ${ANDEME_QT_CLIENT_TEST_SRCS})
 target_link_libraries(AndemeQtClientUnittests
     GTest::gtest GTest::gtest_main)
-target_link_libraries(AndemeQtClientUnittests Qt5::Widgets)
+target_link_libraries(AndemeQtClientUnittests AndemeQtSettings)
 
 
 

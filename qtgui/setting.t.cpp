@@ -22,7 +22,9 @@ struct TempDirectory {
 }  // namespace
 
 TEST(Settings, settingTest) {
-    {
-    }
+  {     TempDirectory tmpfolder;
+        andeme::Settings settingfile;
+
   }
+}
 
