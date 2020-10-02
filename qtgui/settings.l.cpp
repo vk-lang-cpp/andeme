@@ -6,7 +6,7 @@ namespace andeme {
 Settings::Settings()
     : settings_(SETTINGS_FILENAME, QSettings::IniFormat), modified_(false) {
     //при первом запуске,значения не записываются в файл до вызова метода
-    //writeSettings,поэтому создан флаг modified_ для проверки наличия
+    // writeSettings,поэтому создан флаг modified_ для проверки наличия
     //записей,чтобы не перезаписать их.
     ReadSettings();
     if (modified_ == false) {

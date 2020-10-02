@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QPushButton>
 #include <iostream>
-#include <settingdialog.h>
+#include <settingwindow.h>
 
 int main(int argc, char** argv) {
     andeme::Settings settings;

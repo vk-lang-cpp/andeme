@@ -119,26 +119,26 @@ file(GLOB ANDEME_QT_GUI_SRCS qtgui/*.cpp qtgui/*.h)
 file(GLOB ANDEME_QT_GUI_UI qtgui/*.ui)
 
 file(GLOB ANDEME_QT_CLIENT_TEST_SRCS qtgui/*.t.cpp)
-file(GLOB ANDEME_QT_UTILS_SRCS qtgui/*.l.cpp qtgui/*.l.h)
+file(GLOB ANDEME_QT_TOOLS_SRCS qtgui/*.l.cpp qtgui/*.l.h)
 list(REMOVE_ITEM ANDEME_QT_GUI_SRCS ${ANDEME_QT_CLIENT_TEST_SRCS})
-list(REMOVE_ITEM ANDEME_QT_GUI_SRCS ${ANDEME_QT_UTILS_SRCS})
+list(REMOVE_ITEM ANDEME_QT_GUI_SRCS ${ANDEME_QT_TOOLS_SRCS})
 
 # add Qtsetting lib
-add_library(AndemeQtUtils ${ANDEME_QT_UTILS_SRCS})
-target_link_libraries(AndemeQtUtils Qt5::Widgets AndemeClient)
-target_include_directories(AndemeQtUtils PRIVATE qtgui)
+add_library(AndemeQtTools ${ANDEME_QT_TOOLS_SRCS})
+target_link_libraries(AndemeQtTools Qt5::Widgets AndemeClient)
+target_include_directories(AndemeQtTools PRIVATE qtgui)
 
 qt5_wrap_ui(ANDEME_QT_GUI_SRCS ${ANDEME_QT_GUI_UI})
 
 add_executable(AndemeQtGui ${ANDEME_QT_GUI_SRCS})
-target_link_libraries(AndemeQtGui Qt5::Widgets  AndemeQtUtils)
+target_link_libraries(AndemeQtGui Qt5::Widgets  AndemeQtTools)
 target_include_directories(AndemeQtGui PRIVATE qtgui)
 
 #add QtClientUnittests
 add_executable(AndemeQtClientUnittests ${ANDEME_QT_CLIENT_TEST_SRCS})
 target_link_libraries(AndemeQtClientUnittests
     GTest::gtest GTest::gtest_main)
-target_link_libraries(AndemeQtClientUnittests AndemeQtUtils)
+target_link_libraries(AndemeQtClientUnittests AndemeQtTools)
 
 
 
