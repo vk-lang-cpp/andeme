@@ -2,12 +2,15 @@
 #define QTGUI_SETTINGS_H_
 #include <QSettings>
 
-// TODO: сделать ui для настройки
+namespace {
+const char* SETTINGS_FILENAME = "settings.ini";
+}
+
 namespace andeme {
 class Settings {
    public:
     Settings();
-    Settings(char*);
+    Settings(std::string);
     ~Settings() { WriteSettings(); }
     void ReadSettings();
     void WriteSettings();
@@ -26,6 +29,7 @@ class Settings {
     QString hostname_;
     QString username_;
     QString portname_;
+    bool modified_;
 };
 }  // namespace andeme
 
