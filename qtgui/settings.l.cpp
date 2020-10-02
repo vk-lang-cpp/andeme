@@ -1,4 +1,4 @@
-#include "settings.h"
+#include "settings.l.h"
 
 namespace {
 const char* SETTINGS_FILENAME = "settings.ini";
@@ -7,14 +7,15 @@ const char* SETTINGS_FILENAME = "settings.ini";
 namespace andeme {
 
 Settings::Settings() : settings_(SETTINGS_FILENAME, QSettings::IniFormat) {
+    if (settings_.
     SetDefaultSettings();
     ReadSettings();
 }
 
-/*Settings::Settings(char* pathfile): settings_(pathfile, QSettings::IniFormat) {
+Settings::Settings(char* pathfile): settings_(pathfile, QSettings::IniFormat) {
     SetDefaultSettings();
     ReadSettings();
-}*/
+}
 
 void Settings::ReadSettings() {
     settings_.beginGroup("/Settings");

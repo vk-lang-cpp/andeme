@@ -1,7 +1,7 @@
 #ifndef QTGUI_SETTINGDIALOG_H
 #define QTGUI_SETTINGDIALOG_H
 #include <QDialog>
-#include "settings.h"
+#include "settings.l.h"
 
 namespace Ui {
 class SettingWindow;

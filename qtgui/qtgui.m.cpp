@@ -1,11 +1,10 @@
-#include <messagemanager.h>
-#include <settings.h>
+#include <messagemanager.l.h>
+#include <settings.l.h>
 #include <ui_qtgui.h>
 #include <QApplication>
 #include <QObject>
 #include <QPushButton>
 #include <iostream>
-//спрятать подальше,т.к создаватся окно будет динамически
 #include <settingdialog.h>
 
 int main(int argc, char** argv) {

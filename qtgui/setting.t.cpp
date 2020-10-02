@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <memory>
 
-#include "settings.h"
+#include "settings.l.h"
 
 #define GTEST_COUT std::cerr << "[          ] [ INFO ]"
 
@@ -23,8 +23,10 @@ struct TempDirectory {
 
 TEST(Settings, settingTest) {
   {     TempDirectory tmpfolder;
-        andeme::Settings settingfile;
-
+        andeme::Settings settingfile((tmpfolder.dirname / "123.conf").string().data());
+        GTEST_COUT<<(tmpfolder.dirname / "123.conf");
+        EXPECT_TRUE(fs::exists(tmpfolder.dirname /
+                               "123.conf"));  //проверка наличия файла
   }
 }
 

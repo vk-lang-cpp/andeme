@@ -6,11 +6,11 @@ SettingWindow::SettingWindow(QWidget *parent)
     ui->setupUi(this);
 
     // placeholders
-    ui->Port->setPlaceholderText(
+    ui->Port->setText(
         QString::fromStdString(settings.Portname()));
-    ui->IpAddress->setPlaceholderText(
+    ui->IpAddress->setText(
         QString::fromStdString(settings.Hostname()));
-    ui->Usename_edit->setPlaceholderText(
+    ui->Usename_edit->setText(
         QString::fromStdString(settings.Username()));
 
     // buttons connecting
